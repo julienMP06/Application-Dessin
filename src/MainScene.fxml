@@ -3,31 +3,39 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.paint.Color?>
-<?import javafx.scene.text.Font?>
 
 <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="MainSceneController">
    <children>
-      <Canvas fx:id="board" height="675.0" layoutY="44.0" onMousePressed="#draw" onMouseDragged="#draw" width="1280.0" />
-      <HBox prefHeight="50.0" prefWidth="1280.0">
+      <Canvas fx:id="board" height="659.0" layoutY="60.0" onMouseDragged="#draw" onMousePressed="#draw" width="1280.0" />
+      <HBox prefHeight="60.0" prefWidth="1280.0" style="-fx-background-color: #C0C0C0;">
          <children>
             <HBox alignment="CENTER_LEFT" prefHeight="47.0" prefWidth="327.0">
                <children>
-                  <MenuButton mnemonicParsing="false" text="MenuButton">
+                  <MenuButton mnemonicParsing="false" style="-fx-background-color: #C0C0C0;">
                      <items>
-                        <MenuItem mnemonicParsing="false" text="Action 1" />
-                        <MenuItem mnemonicParsing="false" text="Unspecified Action" />
+                        <MenuItem mnemonicParsing="false" text="Ouvrir" />
+                        <MenuItem mnemonicParsing="false" text="Sauvegarder" />
                         <MenuItem mnemonicParsing="false" text="Action 2" />
                      </items>
+                     <graphic>
+                        <ImageView fitHeight="34.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@Image/Menu.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
                   </MenuButton>
                </children>
                <HBox.margin>
@@ -36,33 +44,36 @@
             </HBox>
             <HBox alignment="CENTER" prefHeight="50.0" prefWidth="640.0">
                <children>
-                  <CheckBox fx:id="pen" mnemonicParsing="false" onAction="#PenButton">
-                     <font>
-                        <Font size="24.0" />
-                     </font>
+                  <ToggleButton fx:id="pen" mnemonicParsing="false" onAction="#PenButton" prefHeight="47.0" prefWidth="47.0" style="-fx-background-color: #C0C0C0;" stylesheets="@style.css">
+                     <graphic>
+                        <ImageView fitHeight="37.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@Image/Crayon.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                     <HBox.margin>
+                        <Insets right="5.0" />
+                     </HBox.margin>
+                  </ToggleButton>
+                  <ToggleButton fx:id="eraser" mnemonicParsing="false" onAction="#EraserButton" prefHeight="47.0" prefWidth="47.0" style="-fx-background-color: #C0C0C0; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0, 0, 1);">
+                     <graphic>
+                        <ImageView fitHeight="37.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@Image/Gomme.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                     <HBox.margin>
+                        <Insets left="5.0" />
+                     </HBox.margin>
+                  </ToggleButton>
+                  <Separator orientation="VERTICAL" prefHeight="60.0" prefWidth="29.0">
                      <HBox.margin>
                         <Insets left="5.0" right="5.0" />
-                     </HBox.margin>
-                  </CheckBox>
-                  <Separator layoutX="190.0" layoutY="10.0" orientation="VERTICAL" prefWidth="20.0">
-                     <HBox.margin>
-                        <Insets />
                      </HBox.margin>
                   </Separator>
-                  <CheckBox fx:id="eraser" mnemonicParsing="false" onAction="#EraserButton">
-                     <font>
-                        <Font size="24.0" />
-                     </font>
-                     <HBox.margin>
-                        <Insets left="5.0" right="5.0" />
-                     </HBox.margin>
-                  </CheckBox>
-                  <Separator orientation="VERTICAL" prefWidth="20.0">
-                     <HBox.margin>
-                        <Insets left="5.0" right="5.0" />
-                     </HBox.margin>
-                  </Separator>
-                  <ColorPicker fx:id="colorchoice" prefHeight="26.0" prefWidth="41.0">
+                  <ColorPicker fx:id="colorchoice" prefHeight="26.0" prefWidth="41.0" style="-fx-background-color: #C0C0C0; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0, 0, 1);">
                      <value>
                         <Color />
                      </value>
@@ -70,23 +81,36 @@
                         <Insets left="5.0" right="5.0" />
                      </HBox.margin>
                   </ColorPicker>
-                  <Separator layoutX="446.0" layoutY="10.0" orientation="VERTICAL" prefWidth="20.0" />
-                  <Slider fx:id="pensize" max="50.0" min="1.0" prefHeight="14.0" prefWidth="100.0" value="5.0">
+                  <Slider fx:id="pensize" max="50.0" min="1.0" prefHeight="14.0" prefWidth="100.0" style="-fx-background-color: #C0C0C0;" value="5.0">
                      <HBox.margin>
                         <Insets left="5.0" right="5.0" />
                      </HBox.margin>
                   </Slider>
                   <Separator orientation="VERTICAL" prefWidth="20.0" />
-                  <Button mnemonicParsing="false" text="Button">
+                  <Button mnemonicParsing="false" style="-fx-background-color: #C0C0C0;">
                      <HBox.margin>
                         <Insets left="5.0" right="5.0" />
                      </HBox.margin>
+                     <graphic>
+                        <ImageView fitHeight="37.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@Image/Formes.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
                   </Button>
                   <Separator orientation="VERTICAL" prefWidth="20.0" />
-                  <Button mnemonicParsing="false" text="Button">
+                  <Button mnemonicParsing="false" style="-fx-background-color: #C0C0C0;">
                      <HBox.margin>
                         <Insets left="5.0" right="5.0" />
                      </HBox.margin>
+                     <graphic>
+                        <ImageView fitHeight="37.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@Image/Select.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
                   </Button>
                </children>
                <HBox.margin>

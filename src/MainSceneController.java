@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Slider;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
@@ -26,22 +27,22 @@ public class MainSceneController {
     private Canvas board;
 
     @FXML
-    private CheckBox pen;
-
-    @FXML
-    private CheckBox eraser;
-
-    @FXML
-    private ColorPicker colorchoice;
-    
-    @FXML
-    private Slider pensize;
-
-    @FXML
     private Button btnUnZoom;
 
     @FXML
     private Button btnZoom;
+
+    @FXML
+    private ColorPicker colorchoice;
+
+    @FXML
+    private ToggleButton eraser;
+
+    @FXML
+    private ToggleButton pen;
+
+    @FXML
+    private Slider pensize;
 
     @FXML
     void PenButton(ActionEvent event) {

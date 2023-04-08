@@ -14,6 +14,7 @@ public class App extends Application {
         try {
             root = FXMLLoader.load(getClass().getResource("MainScene.fxml"));
             Scene scene = new Scene(root);
+            scene.getStylesheets().add("style.css");
   
             primaryStage.setTitle("Hello World!");
                   primaryStage.setScene(scene);
