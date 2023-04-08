@@ -27,7 +27,6 @@
                      <items>
                         <MenuItem mnemonicParsing="false" text="Ouvrir" />
                         <MenuItem mnemonicParsing="false" text="Sauvegarder" />
-                        <MenuItem mnemonicParsing="false" text="Action 2" />
                      </items>
                      <graphic>
                         <ImageView fitHeight="34.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
