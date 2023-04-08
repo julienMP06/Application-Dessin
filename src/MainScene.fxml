@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuButton?>
@@ -12,11 +13,12 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.paint.Color?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="655.0" prefWidth="931.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml" fx:controller="MainSceneController">
+<AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="MainSceneController">
    <children>
-      <Canvas fx:id="board" height="675.0" layoutY="44.0" onMouseDragged="#draw" onMouseMoved="#draw" width="1280.0" />
-      <HBox prefHeight="47.0" prefWidth="1280.0">
+      <Canvas fx:id="board" height="675.0" layoutY="44.0" onMousePressed="#draw" onMouseDragged="#draw" width="1280.0" />
+      <HBox prefHeight="50.0" prefWidth="1280.0">
          <children>
             <HBox alignment="CENTER_LEFT" prefHeight="47.0" prefWidth="327.0">
                <children>
@@ -32,30 +34,60 @@
                   <Insets left="10.0" />
                </HBox.margin>
             </HBox>
-            <HBox alignment="CENTER" prefHeight="47.0" prefWidth="624.0">
+            <HBox alignment="CENTER" prefHeight="50.0" prefWidth="640.0">
                <children>
-                  <Button mnemonicParsing="false" onAction="#PenButton" text="Button" />
-                  <Button mnemonicParsing="false" text="Button">
+                  <CheckBox fx:id="pen" mnemonicParsing="false" onAction="#PenButton">
+                     <font>
+                        <Font size="24.0" />
+                     </font>
                      <HBox.margin>
-                        <Insets left="5.0" />
+                        <Insets left="5.0" right="5.0" />
                      </HBox.margin>
-                  </Button>
-                  <Separator orientation="VERTICAL" prefHeight="37.0" prefWidth="11.0" />
-                  <ColorPicker>
-                     <value>
-                        <Color />
-                     </value>
-                  </ColorPicker>
-                  <Separator orientation="VERTICAL" prefHeight="200.0">
+                  </CheckBox>
+                  <Separator layoutX="190.0" layoutY="10.0" orientation="VERTICAL" prefWidth="20.0">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </Separator>
+                  <CheckBox fx:id="eraser" mnemonicParsing="false" onAction="#EraserButton">
+                     <font>
+                        <Font size="24.0" />
+                     </font>
+                     <HBox.margin>
+                        <Insets left="5.0" right="5.0" />
+                     </HBox.margin>
+                  </CheckBox>
+                  <Separator orientation="VERTICAL" prefWidth="20.0">
                      <HBox.margin>
                         <Insets left="5.0" right="5.0" />
                      </HBox.margin>
                   </Separator>
-                  <Slider max="10.0" min="1.0" value="5.0" />
-                  <Separator orientation="VERTICAL" prefHeight="37.0" prefWidth="11.0" />
-                  <Button mnemonicParsing="false" text="Button" />
-                  <Separator orientation="VERTICAL" prefHeight="37.0" prefWidth="11.0" />
-                  <Button mnemonicParsing="false" text="Button" />
+                  <ColorPicker fx:id="colorchoice" prefHeight="26.0" prefWidth="41.0">
+                     <value>
+                        <Color />
+                     </value>
+                     <HBox.margin>
+                        <Insets left="5.0" right="5.0" />
+                     </HBox.margin>
+                  </ColorPicker>
+                  <Separator layoutX="446.0" layoutY="10.0" orientation="VERTICAL" prefWidth="20.0" />
+                  <Slider fx:id="pensize" max="50.0" min="1.0" prefHeight="14.0" prefWidth="100.0" value="5.0">
+                     <HBox.margin>
+                        <Insets left="5.0" right="5.0" />
+                     </HBox.margin>
+                  </Slider>
+                  <Separator orientation="VERTICAL" prefWidth="20.0" />
+                  <Button mnemonicParsing="false" text="Button">
+                     <HBox.margin>
+                        <Insets left="5.0" right="5.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Separator orientation="VERTICAL" prefWidth="20.0" />
+                  <Button mnemonicParsing="false" text="Button">
+                     <HBox.margin>
+                        <Insets left="5.0" right="5.0" />
+                     </HBox.margin>
+                  </Button>
                </children>
                <HBox.margin>
                   <Insets />
