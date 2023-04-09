@@ -1,6 +1,14 @@
 import java.beans.EventHandler;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
+
+import javax.imageio.ImageIO;
+
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
@@ -11,6 +19,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.Slider;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
@@ -18,6 +27,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.FileChooser;
 
 
 public class MainSceneController {
@@ -45,6 +55,12 @@ public class MainSceneController {
     private Button btnUnZoom;
 
     @FXML
+    private MenuItem SaveButton;
+
+    @FXML
+    private MenuItem openButton;
+
+    @FXML
     private Button btnZoom;
 
     @FXML
@@ -67,6 +83,8 @@ public class MainSceneController {
 
     @FXML
     private Circle eraserviewer;
+
+    private List<Rectangle> rectList = new ArrayList<>();
 
     // Variables pour la création de rectangle
     private Rectangle rect = new Rectangle();
@@ -155,7 +173,9 @@ public class MainSceneController {
         if (usage == "eraser" & eraser.isSelected()) {
             gc.setFill(Color.WHITESMOKE);
             gc.fillOval(e.getX()-radius, e.getY()-radius, radius * 2, radius * 2);  
-        } else if (usage == "rect" & isDrawingRect) {
+        }
+        if (usage == "rect" & isDrawingRect) {
+            rectList.add(rect);
             // Calculer les dimensions du rectangle en fonction de la position de la souris
             double rectX = Math.min(e.getX(), rectStartX);
             double rectY = Math.min(e.getY(), rectStartY);
@@ -164,7 +184,10 @@ public class MainSceneController {
             
             // Redessiner le canevas sans le rectangle précédent
             gc.clearRect(0, 0, board.getWidth(), board.getHeight());
-            
+            for (Rectangle r : rectList) {
+                gc.strokeRect(r.getX(), r.getY(), r.getWidth(), r.getHeight());
+            }
+
             // Dessiner le rectangle actuel
             gc.setStroke(colorchoice.getValue());
             gc.strokeRect(rectX, rectY, rectWidth, rectHeight);
@@ -195,32 +218,81 @@ public class MainSceneController {
     }
     
 
-    @FXML
-    void RectStart(MouseEvent e) {
-        // Enregistrer les coordonnées de début du rectangle
-        rectStartX = e.getX();
-        rectStartY = e.getY();
-        isDrawingRect = true;
-    }
+    // @FXML
+    // void RectStart(MouseEvent e) {
+    //     // Enregistrer les coordonnées de début du rectangle
+    //     rectStartX = e.getX();
+    //     rectStartY = e.getY();
+    //     isDrawingRect = true;
+    // }
     
 
-    @FXML
-    void RectEnd(MouseEvent e) {
-        // Enregistrer les coordonnées finales du rectangle
-        double rectEndX = e.getX();
-        double rectEndY = e.getY();
+    // @FXML
+    // void RectEnd(MouseEvent e) {
+    //     // Enregistrer les coordonnées finales du rectangle
+    //     double rectEndX = e.getX();
+    //     double rectEndY = e.getY();
         
-        // Dessiner le rectangle final
-        gc.setStroke(colorchoice.getValue());
-        gc.strokeRect(rectStartX, rectStartY, rectEndX - rectStartX, rectEndY - rectStartY);
+    //     // Dessiner le rectangle final
+    //     gc.setStroke(colorchoice.getValue());
+    //     gc.strokeRect(rectStartX, rectStartY, rectEndX - rectStartX, rectEndY - rectStartY);
         
-        // Réinitialiser les variables de dessin de rectangle
-        isDrawingRect = false;
-        rectStartX = 0;
-        rectStartY = 0;
-    }
+    //     // Réinitialiser les variables de dessin de rectangle
+    //     isDrawingRect = false;
+    //     rectStartX = 0;
+    //     rectStartY = 0;
+    // }
     
+    @FXML
+    private void saveDrawing(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Enregistrer le dessin");
+        File file = fileChooser.showSaveDialog(null);
+        if (file != null) {
+            try {
+                WritableImage image = new WritableImage((int) board.getWidth(), (int) board.getHeight());
+                board.snapshot(null, image);
+                ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
+            } catch (IOException ex) {
+                // Gérer les erreurs d'écriture de fichier ici
+            }
+        }
+    }   
 
+    @FXML
+    private void openFile(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Ouvrir un fichier");
+        File file = fileChooser.showOpenDialog(null);
+        if (file != null) {
+            // Ajoutez ici le code pour traiter le fichier ouvert
+        }
+    }
+
+    @FXML
+    void handleMouseClicked(MouseEvent event) {
+        if (usage == "rect" && !isDrawingRect) {
+            rectStartX = event.getX();
+            rectStartY = event.getY();
+            rect = new Rectangle(rectStartX, rectStartY, 0, 0);
+            rect.setStroke(Color.BLACK);
+            rect.setFill(Color.TRANSPARENT);
+            rectList.add(rect);
+            isDrawingRect = true;
+        }
+    }
+
+    @FXML
+    void handleMouseDragged(MouseEvent event) {
+        if (usage == "rect" && isDrawingRect) {
+            rectWidth = Math.abs(event.getX() - rectStartX);
+            rectHeight = Math.abs(event.getY() - rectStartY);
+            rect.setWidth(rectWidth);
+            rect.setHeight(rectHeight);
+            rect.setX(Math.min(rectStartX, event.getX()));
+            rect.setY(Math.min(rectStartY, event.getY()));
+        }
+    }
 
     @FXML
     void handleZoomInButtonAction(ActionEvent event) {

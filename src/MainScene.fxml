@@ -27,7 +27,7 @@
                <children>
                   <MenuButton mnemonicParsing="false" style="-fx-background-color: #C0C0C0;" styleClass="pen">
                      <items>
-                        <MenuItem mnemonicParsing="false" text="Ouvrir">
+                        <MenuItem fx:id="openButton" mnemonicParsing="false" onAction="#openFile" text="Ouvrir">
                            <graphic>
                               <ImageView fitHeight="37.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -35,7 +35,7 @@
                                  </image>
                               </ImageView>
                            </graphic></MenuItem>
-                        <MenuItem mnemonicParsing="false" text="Sauvegarder">
+                        <MenuItem fx:id="SaveButton" mnemonicParsing="false" onAction="#saveDrawing" text="Sauvegarder">
                            <graphic>
                               <ImageView fitHeight="37.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
