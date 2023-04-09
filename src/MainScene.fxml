@@ -25,8 +25,22 @@
                <children>
                   <MenuButton mnemonicParsing="false" style="-fx-background-color: #C0C0C0;">
                      <items>
-                        <MenuItem mnemonicParsing="false" text="Ouvrir" />
-                        <MenuItem mnemonicParsing="false" text="Sauvegarder" />
+                        <MenuItem mnemonicParsing="false" text="Ouvrir">
+                           <graphic>
+                              <ImageView fitHeight="37.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@Image/folder_open_FILL0_wght400_GRAD0_opsz48.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic></MenuItem>
+                        <MenuItem mnemonicParsing="false" text="Sauvegarder">
+                           <graphic>
+                              <ImageView fitHeight="37.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@Image/save_FILL0_wght400_GRAD0_opsz48.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic></MenuItem>
                      </items>
                      <graphic>
                         <ImageView fitHeight="34.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
@@ -43,7 +57,7 @@
             </HBox>
             <HBox alignment="CENTER" prefHeight="50.0" prefWidth="640.0">
                <children>
-                  <ToggleButton fx:id="pen" mnemonicParsing="false" onAction="#PenButton" prefHeight="47.0" prefWidth="47.0" stylesheets="@./style.css">
+                  <ToggleButton fx:id="pen" mnemonicParsing="false" onAction="#PenButton" prefHeight="47.0" prefWidth="47.0" stylesheets="@style.css">
                      <graphic>
                         <ImageView fitHeight="37.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -88,9 +102,30 @@
                   <Separator orientation="VERTICAL" prefWidth="20.0" />
                   <MenuButton mnemonicParsing="false" style="-fx-background-color: #C0C0C0;">
                     <items>
-                      <MenuItem mnemonicParsing="false" text="Rectangle" />
-                      <MenuItem mnemonicParsing="false" text="Triangle" />
-                        <MenuItem mnemonicParsing="false" text="Cercle" />
+                      <MenuItem mnemonicParsing="false" text="Rectangle">
+                           <graphic>
+                              <ImageView fitHeight="37.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@Image/rectangle.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic></MenuItem>
+                      <MenuItem mnemonicParsing="false" text="Triangle">
+                           <graphic>
+                              <ImageView fitHeight="37.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@Image/triangle.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic></MenuItem>
+                        <MenuItem mnemonicParsing="false" text="Cercle">
+                           <graphic>
+                              <ImageView fitHeight="37.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@Image/cercle.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic></MenuItem>
                     </items>
                      <graphic>
                         <ImageView fitHeight="37.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
