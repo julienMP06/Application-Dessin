@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ColorPicker?>
@@ -187,6 +188,9 @@
                </graphic></Button>
          </children>
       </HBox>
-      <Circle fx:id="eraserviewer" fill="#ffffff00" layoutX="0" layoutY="60" onMouseClicked="#Draw" onMouseDragged="#Draw" onMouseMoved="#Eraserview" radius="30.0" stroke="WHITE" strokeType="INSIDE" strokeWidth="3.0" visible="false" />
+      <Circle fx:id="eraserviewer" fill="#ffffff00" layoutX="0" layoutY="60" onMouseClicked="#Draw" onMouseDragged="#Draw" onMouseMoved="#Eraserview" radius="30.0" stroke="WHITE" strokeType="INSIDE" strokeWidth="3.0" visible="false">
+         <cursor>
+            <Cursor fx:constant="NONE" />
+         </cursor></Circle>
    </children>
 </AnchorPane>
