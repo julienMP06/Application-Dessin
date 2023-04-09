@@ -13,18 +13,7 @@
 }
 
 .pen:selected {
-    -fx-effect: innershadow(gaussian, rgba(255,255,255,0.5), 10, 0, 0, 0);
+    -fx-effect: innershadow(gaussian, rgba(255,255,255,0.5), 30, 0, 0, 0);
 }
 
-.forme {
-    -fx-background-color: #C0C0C0;
-}
-
-.forme:selected {
-    -fx-effect: innershadow(gaussian, rgba(255,255,255,0.5), 10, 0, 0, 0);
-}
-
-.eraser:selected {
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0, 0, 1);
-}
 

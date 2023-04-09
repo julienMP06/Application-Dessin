@@ -24,7 +24,7 @@
          <children>
             <HBox alignment="CENTER_LEFT" prefHeight="47.0" prefWidth="327.0">
                <children>
-                  <MenuButton mnemonicParsing="false" style="-fx-background-color: #C0C0C0;">
+                  <MenuButton mnemonicParsing="false" style="-fx-background-color: #C0C0C0;" styleClass="pen">
                      <items>
                         <MenuItem mnemonicParsing="false" text="Ouvrir">
                            <graphic>
@@ -70,7 +70,7 @@
                         <Insets right="5.0" />
                      </HBox.margin>
                   </ToggleButton>
-                  <ToggleButton fx:id="eraser" mnemonicParsing="false" onAction="#EraserButton" prefHeight="47.0" prefWidth="47.0" style="-fx-background-color: #C0C0C0;" styleClass="forme">
+                  <ToggleButton fx:id="eraser" mnemonicParsing="false" onAction="#EraserButton" prefHeight="47.0" prefWidth="47.0" style="-fx-background-color: #C0C0C0;" styleClass="pen">
                      <graphic>
                         <ImageView fitHeight="37.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -101,7 +101,7 @@
                      </HBox.margin>
                   </Slider>
                   <Separator orientation="VERTICAL" prefWidth="20.0" />
-                  <MenuButton mnemonicParsing="false" style="-fx-background-color: #C0C0C0;">
+                  <MenuButton mnemonicParsing="false" style="-fx-background-color: #C0C0C0;" styleClass="pen">
                     <items>
                       <MenuItem mnemonicParsing="false" text="Rectangle">
                            <graphic>
@@ -137,7 +137,7 @@
                      </graphic>
                   </MenuButton>
                   <Separator orientation="VERTICAL" prefWidth="20.0" />
-                  <Button mnemonicParsing="false" style="-fx-background-color: #C0C0C0;">
+                  <Button mnemonicParsing="false" style="-fx-background-color: #C0C0C0;" styleClass="pen">
                      <HBox.margin>
                         <Insets left="5.0" right="5.0" />
                      </HBox.margin>
