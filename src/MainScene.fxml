@@ -58,7 +58,7 @@
             </HBox>
             <HBox alignment="CENTER" prefHeight="50.0" prefWidth="640.0">
                <children>
-                  <ToggleButton fx:id="pen" mnemonicParsing="false" onAction="#PenButton" prefHeight="47.0" prefWidth="47.0" selected="true" stylesheets="@style.css">
+                  <ToggleButton fx:id="pen" mnemonicParsing="false" onAction="#PenButton" prefHeight="47.0" prefWidth="47.0" selected="true" styleClass="pen" stylesheets="@style.css">
                      <graphic>
                         <ImageView fitHeight="37.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -70,7 +70,7 @@
                         <Insets right="5.0" />
                      </HBox.margin>
                   </ToggleButton>
-                  <ToggleButton fx:id="eraser" mnemonicParsing="false" onAction="#EraserButton" prefHeight="47.0" prefWidth="47.0" style="-fx-background-color: #C0C0C0; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0, 0, 1);">
+                  <ToggleButton fx:id="eraser" mnemonicParsing="false" onAction="#EraserButton" prefHeight="47.0" prefWidth="47.0" style="-fx-background-color: #C0C0C0;" styleClass="forme">
                      <graphic>
                         <ImageView fitHeight="37.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -158,7 +158,7 @@
       </HBox>
       <HBox alignment="CENTER" layoutX="1114.0" layoutY="669.0" prefHeight="36.0" prefWidth="152.0">
          <children>
-            <Button fx:id="btnUnZoom" mnemonicParsing="false" onAction="#handleZoomInButtonAction" prefHeight="20.0" prefWidth="21.0">
+            <Button fx:id="btnUnZoom" mnemonicParsing="false" onAction="#handleZoomInButtonAction" prefHeight="20.0" prefWidth="21.0" styleClass="round-button">
                <graphic>
                   <ImageView fitHeight="19.0" fitWidth="19.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -177,7 +177,7 @@
                   <Insets left="5.0" right="5.0" />
                </HBox.margin>
             </Separator>
-            <Button fx:id="btnZoom" mnemonicParsing="false" onAction="#handleZoomInButtonAction" prefHeight="26.0" prefWidth="29.0">
+            <Button fx:id="btnZoom" mnemonicParsing="false" onAction="#handleZoomInButtonAction" prefHeight="26.0" prefWidth="29.0" styleClass="round-button">
                <graphic>
                   <ImageView fitHeight="19.0" fitWidth="19.0" pickOnBounds="true" preserveRatio="true">
                      <image>
