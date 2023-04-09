@@ -104,7 +104,7 @@
                   <Separator orientation="VERTICAL" prefWidth="20.0" />
                   <MenuButton mnemonicParsing="false" style="-fx-background-color: #C0C0C0;" styleClass="pen">
                     <items>
-                      <MenuItem mnemonicParsing="false" text="Rectangle">
+                      <MenuItem fx:id="RecButton" mnemonicParsing="false" onAction="#DrawRec" text="Rectangle">
                            <graphic>
                               <ImageView fitHeight="37.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
                                  <image>

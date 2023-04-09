@@ -1,3 +1,4 @@
+import java.beans.EventHandler;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
@@ -6,7 +7,9 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Slider;
+import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -14,6 +17,8 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
+
 
 public class MainSceneController {
 
@@ -52,6 +57,9 @@ public class MainSceneController {
     private ToggleButton pen;
 
     @FXML
+    private MenuItem RecButton;
+
+    @FXML
     private HBox MenusTools;
     
     @FXML
@@ -59,6 +67,12 @@ public class MainSceneController {
 
     @FXML
     private Circle eraserviewer;
+
+    // Variables pour la création de rectangle
+    private Rectangle rect = new Rectangle();
+    private boolean isDrawingRect = false;
+    private double rectStartX, rectStartY;
+    private double rectWidth, rectHeight;
 
     @FXML 
     void Changesize(MouseEvent event){
@@ -130,22 +144,83 @@ public class MainSceneController {
     void Draw(MouseEvent e) {
         gc = board.getGraphicsContext2D();
         radius = eraserviewer.getRadius();
-        if (usage == "pen" & pen.isSelected()){
+        if (usage == "pen" & pen.isSelected()) {
             gc.setFill(colorchoice.getValue());
-            if(e.getY() >= 0){
+            if (e.getY() >= 0) {
                 gc.fillOval(e.getX() - pensize/2, e.getY()- pensize/2, pensize, pensize);
-            }else{ 
-                // le cas si on arrive au bord en haut
+            } else {
                 gc.fillOval(e.getX() - pensize/2, - pensize/2, pensize, pensize);
             }
-        }
-        if (usage == "eraser" & eraser.isSelected()){
+        }  
+        if (usage == "eraser" & eraser.isSelected()) {
             gc.setFill(Color.WHITESMOKE);
             gc.fillOval(e.getX()-radius, e.getY()-radius, radius * 2, radius * 2);  
-        } 
-        Eraserview(e);
+        } else if (usage == "rect" & isDrawingRect) {
+            // Calculer les dimensions du rectangle en fonction de la position de la souris
+            double rectX = Math.min(e.getX(), rectStartX);
+            double rectY = Math.min(e.getY(), rectStartY);
+            double rectWidth = Math.abs(e.getX() - rectStartX);
+            double rectHeight = Math.abs(e.getY() - rectStartY);
             
+            // Redessiner le canevas sans le rectangle précédent
+            gc.clearRect(0, 0, board.getWidth(), board.getHeight());
+            
+            // Dessiner le rectangle actuel
+            gc.setStroke(colorchoice.getValue());
+            gc.strokeRect(rectX, rectY, rectWidth, rectHeight);
+        }
+        Eraserview(e);
     }
+    
+    
+    @FXML
+    void DrawRec(ActionEvent event) {
+        // Changer l'outil de dessin
+        usage = "rect";
+        isDrawingRect = true;
+        pen.setSelected(false);
+        eraser.setSelected(false);
+        eraserviewer.setVisible(false);
+        
+        // Écouter les événements de la souris pour dessiner le rectangle
+        board.setOnMousePressed(e -> {
+            rectStartX = e.getX();
+            rectStartY = e.getY();
+            isDrawingRect = true;
+        });
+        
+        board.setOnMouseReleased(e -> {
+            isDrawingRect = false;
+        });
+    }
+    
+
+    @FXML
+    void RectStart(MouseEvent e) {
+        // Enregistrer les coordonnées de début du rectangle
+        rectStartX = e.getX();
+        rectStartY = e.getY();
+        isDrawingRect = true;
+    }
+    
+
+    @FXML
+    void RectEnd(MouseEvent e) {
+        // Enregistrer les coordonnées finales du rectangle
+        double rectEndX = e.getX();
+        double rectEndY = e.getY();
+        
+        // Dessiner le rectangle final
+        gc.setStroke(colorchoice.getValue());
+        gc.strokeRect(rectStartX, rectStartY, rectEndX - rectStartX, rectEndY - rectStartY);
+        
+        // Réinitialiser les variables de dessin de rectangle
+        isDrawingRect = false;
+        rectStartX = 0;
+        rectStartY = 0;
+    }
+    
+
 
     @FXML
     void handleZoomInButtonAction(ActionEvent event) {
