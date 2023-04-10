@@ -112,7 +112,7 @@
                                  </image>
                               </ImageView>
                            </graphic></MenuItem>
-                      <MenuItem mnemonicParsing="false" text="Triangle">
+                      <MenuItem fx:id="TriangleButton" mnemonicParsing="false" onAction="#DrawTriangle" text="Triangle">
                            <graphic>
                               <ImageView fitHeight="37.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -120,7 +120,7 @@
                                  </image>
                               </ImageView>
                            </graphic></MenuItem>
-                        <MenuItem mnemonicParsing="false" text="Cercle">
+                        <MenuItem fx:id="CircleButton" mnemonicParsing="false" onAction="#DrawCircle" text="Cercle">
                            <graphic>
                               <ImageView fitHeight="37.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
                                  <image>

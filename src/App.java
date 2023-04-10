@@ -15,7 +15,7 @@ public class App extends Application {
             String css = getClass().getResource("style.css").toExternalForm();
             scene.getStylesheets().add(css);
   
-            primaryStage.setTitle("Hello World!");
+            primaryStage.setTitle("Application Dessin");
             primaryStage.setScene(scene);
             primaryStage.show();
         } catch (IOException e) {

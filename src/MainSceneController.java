@@ -26,6 +26,7 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 
@@ -76,6 +77,12 @@ public class MainSceneController {
     private MenuItem RecButton;
 
     @FXML
+    private MenuItem CircleButton;
+
+    @FXML
+    private MenuItem TriangleButton;
+
+    @FXML
     private HBox MenusTools;
     
     @FXML
@@ -84,13 +91,18 @@ public class MainSceneController {
     @FXML
     private Circle eraserviewer;
 
-    private List<Rectangle> rectList = new ArrayList<>();
+    private WritableImage drawings;
 
     // Variables pour la création de rectangle
-    private Rectangle rect = new Rectangle();
     private boolean isDrawingRect = false;
     private double rectStartX, rectStartY;
     private double rectWidth, rectHeight;
+
+    private double circleStartX, circleStartY;
+    private double circleWidth, circleHeight;
+
+    private double triangleStartX, triangleStartY;
+    private double triangleWidth, triangleHeight;
 
     @FXML 
     void Changesize(MouseEvent event){
@@ -175,23 +187,40 @@ public class MainSceneController {
             gc.fillOval(e.getX()-radius, e.getY()-radius, radius * 2, radius * 2);  
         }
         if (usage == "rect" & isDrawingRect) {
-            rectList.add(rect);
-            // Calculer les dimensions du rectangle en fonction de la position de la souris
+            // drawings = board.snapshot(null, null);
+            gc.clearRect(0, 0, board.getWidth(), board.getHeight());
+            // gc.drawImage(drawings, 0, 0);
+            rectWidth = Math.abs(e.getX() - rectStartX);
+            rectHeight = Math.abs(e.getY() - rectStartY);
             double rectX = Math.min(e.getX(), rectStartX);
             double rectY = Math.min(e.getY(), rectStartY);
-            double rectWidth = Math.abs(e.getX() - rectStartX);
-            double rectHeight = Math.abs(e.getY() - rectStartY);
-            
-            // Redessiner le canevas sans le rectangle précédent
-            gc.clearRect(0, 0, board.getWidth(), board.getHeight());
-            for (Rectangle r : rectList) {
-                gc.strokeRect(r.getX(), r.getY(), r.getWidth(), r.getHeight());
-            }
-
-            // Dessiner le rectangle actuel
             gc.setStroke(colorchoice.getValue());
+            gc.setLineWidth(pensize);
             gc.strokeRect(rectX, rectY, rectWidth, rectHeight);
-        }
+        }    
+        if (usage == "circle") {
+            gc.clearRect(0, 0, board.getWidth(), board.getHeight());
+            circleWidth = Math.abs(e.getX() - circleStartX);
+            circleHeight = Math.abs(e.getY() - circleStartY);
+            double circleX = Math.min(e.getX(), circleStartX);
+            double circleY = Math.min(e.getY(), circleStartY);
+            gc.setStroke(colorchoice.getValue());
+            gc.setLineWidth(pensize);
+            gc.strokeOval(circleX, circleY, circleWidth, circleHeight);
+        }    
+        if (usage == "triangle") {
+            gc.clearRect(0, 0, board.getWidth(), board.getHeight());
+            triangleWidth = Math.abs(e.getX() - triangleStartX);
+            triangleHeight = Math.abs(e.getY() - triangleStartY);
+            double triangleX = Math.min(e.getX(), triangleStartX);
+            double triangleY = Math.min(e.getY(), triangleStartY);
+            double sideLength = Math.sqrt(Math.pow(e.getX() - triangleX, 2) + Math.pow(e.getY() - triangleY, 2));
+            double[] xPoints = {triangleX, e.getX(), triangleX + sideLength};
+            double[] yPoints = {triangleY, e.getY(), triangleY + sideLength};
+            gc.setStroke(colorchoice.getValue());
+            gc.setLineWidth(pensize);
+            gc.strokePolygon(xPoints, yPoints, 3);
+        }    
         Eraserview(e);
     }
     
@@ -216,32 +245,58 @@ public class MainSceneController {
             isDrawingRect = false;
         });
     }
-    
 
-    // @FXML
-    // void RectStart(MouseEvent e) {
-    //     // Enregistrer les coordonnées de début du rectangle
-    //     rectStartX = e.getX();
-    //     rectStartY = e.getY();
-    //     isDrawingRect = true;
-    // }
-    
+    @FXML
+    void DrawCircle(ActionEvent event) {
+        // Changer l'outil de dessin
+        usage = "circle";
+        pen.setSelected(false);
+        eraser.setSelected(false);
+        eraserviewer.setVisible(false);
+            
+        // Écouter les événements de la souris pour dessiner le rectangle
+        board.setOnMousePressed(e -> {
+            circleStartX = e.getX();
+            circleStartY = e.getY();
+        });
+            
+        board.setOnMouseReleased(e -> {
+        });
+    }
 
-    // @FXML
-    // void RectEnd(MouseEvent e) {
-    //     // Enregistrer les coordonnées finales du rectangle
-    //     double rectEndX = e.getX();
-    //     double rectEndY = e.getY();
-        
-    //     // Dessiner le rectangle final
-    //     gc.setStroke(colorchoice.getValue());
-    //     gc.strokeRect(rectStartX, rectStartY, rectEndX - rectStartX, rectEndY - rectStartY);
-        
-    //     // Réinitialiser les variables de dessin de rectangle
-    //     isDrawingRect = false;
-    //     rectStartX = 0;
-    //     rectStartY = 0;
-    // }
+    @FXML
+    void DrawTriangle(ActionEvent event) {
+        // Changer l'outil de dessin
+        usage = "triangle";
+        pen.setSelected(false);
+        eraser.setSelected(false);
+        eraserviewer.setVisible(false);
+            
+        // Écouter les événements de la souris pour dessiner le rectangle
+        board.setOnMousePressed(e -> {
+            triangleStartX = e.getX();
+            triangleStartY = e.getY();
+        });
+            
+        board.setOnMouseReleased(e -> {
+        });
+    }
+
+    @FXML
+    void RectButton(ActionEvent event) {
+        usage = "rect";
+    }
+
+    @FXML
+    void CircleButton(ActionEvent event) {
+        usage = "rect";
+    }
+
+    // Implémenter un bouton effacer toute la page
+    @FXML
+    void ClearButton(ActionEvent event) {
+        gc.clearRect(0, 0, board.getWidth(), board.getHeight());
+    }
     
     @FXML
     private void saveDrawing(ActionEvent event) {
@@ -269,30 +324,6 @@ public class MainSceneController {
         }
     }
 
-    @FXML
-    void handleMouseClicked(MouseEvent event) {
-        if (usage == "rect" && !isDrawingRect) {
-            rectStartX = event.getX();
-            rectStartY = event.getY();
-            rect = new Rectangle(rectStartX, rectStartY, 0, 0);
-            rect.setStroke(Color.BLACK);
-            rect.setFill(Color.TRANSPARENT);
-            rectList.add(rect);
-            isDrawingRect = true;
-        }
-    }
-
-    @FXML
-    void handleMouseDragged(MouseEvent event) {
-        if (usage == "rect" && isDrawingRect) {
-            rectWidth = Math.abs(event.getX() - rectStartX);
-            rectHeight = Math.abs(event.getY() - rectStartY);
-            rect.setWidth(rectWidth);
-            rect.setHeight(rectHeight);
-            rect.setX(Math.min(rectStartX, event.getX()));
-            rect.setY(Math.min(rectStartY, event.getY()));
-        }
-    }
 
     @FXML
     void handleZoomInButtonAction(ActionEvent event) {
@@ -301,6 +332,7 @@ public class MainSceneController {
 
     @FXML
     void initialize() {
+        drawings = new WritableImage((int) board.getWidth(), (int) board.getHeight());
         /*gc = board.getGraphicsContext2D();
         board.setOnMouseDragged(this::draw);
         board.setStyle("-fx-background-color: black;");
