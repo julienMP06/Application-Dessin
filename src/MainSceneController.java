@@ -21,6 +21,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.Slider;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -460,7 +461,15 @@ public class MainSceneController {
         fileChooser.setTitle("Ouvrir un fichier");
         File file = fileChooser.showOpenDialog(null);
         if (file != null) {
-            // Ajoutez ici le code pour traiter le fichier ouvert
+            // Charger l'image à partir du fichier
+            Image image = new Image(file.toURI().toString());
+
+            // Dessiner l'image sur le Canvas
+            GraphicsContext gc = board.getGraphicsContext2D();
+            gc.drawImage(image, 0, 0);
+
+            // Stocker l'image dans l'attribut drawings
+            drawings = board.snapshot(null, null);
         }
     }
 
