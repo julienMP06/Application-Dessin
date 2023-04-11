@@ -390,7 +390,7 @@ public class MainSceneController {
             gc.strokeOval(circleX, circleY, circleWidth, circleHeight);
         }    
 
-        if (usage == "triangle" & triangle.isSelected()) {
+        if (usage == "triangle" && triangle.isSelected()) {
             gc.clearRect(0, 0, board.getWidth(), board.getHeight());
             gc.setStroke(colorchoice.getValue());
             gc.setLineWidth(shapesize);
@@ -398,13 +398,18 @@ public class MainSceneController {
             triangleHeight = Math.abs(e.getY() - ShapeStartY);
             double triangleX = Math.min(e.getX(), ShapeStartX);
             double triangleY = Math.min(e.getY(), ShapeStartY);
-            double sideLength = Math.sqrt(Math.pow(e.getX() - triangleX, 2) + Math.pow(e.getY() - triangleY, 2));
-            double[] xPoints = {triangleX, e.getX(), triangleX + sideLength};
-            double[] yPoints = {triangleY, e.getY(), triangleY + sideLength};
-            gc.drawImage(drawings, 0, 0);
-            gc.strokePolygon(xPoints, yPoints, 3);
-        }    
-
+            // Dans le cas ou on dessine un triangle vers le haut il faut changer l'ordre des points  
+            if (e.getY() < ShapeStartY) {
+                gc.strokePolygon(new double[]{triangleX, triangleX + triangleWidth, triangleX + triangleWidth/2},
+                                 new double[]{triangleY, triangleY, triangleY + triangleHeight}, 
+                                 3);
+            } else {
+                gc.strokePolygon(new double[]{triangleX, triangleX + triangleWidth, triangleX + triangleWidth/2},
+                                 new double[]{triangleY + triangleHeight, triangleY + triangleHeight, triangleY}, 
+                                 3);
+            }
+        }
+        
         if ((usage == "line" & line.isSelected())){
             //gc.setFill(Color.WHITESMOKE);
 		    //gc.fillRect(0,0,board.getWidth(),board.getHeight());
