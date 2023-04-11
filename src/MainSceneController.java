@@ -72,6 +72,9 @@ public class MainSceneController {
     private Button btnZoom;
 
     @FXML
+    private Button clearBut;
+
+    @FXML
     private ColorPicker colorchoice;
 
     @FXML
@@ -186,6 +189,8 @@ public class MainSceneController {
         }
         if (tool == "rect"){
 
+            drawings = board.snapshot(null, null);
+
             circle.setSelected(false);
             triangle.setSelected(false);
             pen.setSelected(false); 
@@ -216,7 +221,6 @@ public class MainSceneController {
                
             eraserviewer.setVisible(false);
         }
-
         if (tool == "line"){
 
             rectangle.setSelected(false);
@@ -302,10 +306,11 @@ public class MainSceneController {
         } 
     }
 
-    // Implémenter un bouton effacer toute la page
+    // Implémentation d'un bouton effacer toute la page
     @FXML
     void ClearButton(ActionEvent event) {
         gc.clearRect(0, 0, board.getWidth(), board.getHeight());
+        drawings = board.snapshot(null, null);
     }
 
 
@@ -343,6 +348,7 @@ public class MainSceneController {
     @FXML
     void Draw(MouseEvent e) {
         if (usage == "pen" & pen.isSelected()) {
+            // D'apres eytan il faut utiliser le moveto et lineto avec un stroke
             //gc.setFill(colorchoice.getValue());
             if (e.getY() >= 0) {
                 gc.fillOval(e.getX() - pensize/2, e.getY()- pensize/2, pensize, pensize);
@@ -359,44 +365,34 @@ public class MainSceneController {
         }
 
         if (usage == "rect" & rectangle.isSelected()) {
-            // drawings = board.snapshot(null, null);
-            //gc.clearRect(0, 0, board.getWidth(), board.getHeight());
-            // gc.drawImage(drawings, 0, 0);
+            gc.clearRect(0, 0, board.getWidth(), board.getHeight());
+            gc.setStroke(colorchoice.getValue());
+            gc.setLineWidth(shapesize);
             rectWidth = Math.abs(e.getX() - ShapeStartX);
             rectHeight = Math.abs(e.getY() - ShapeStartY);
             double rectX = Math.min(e.getX(), ShapeStartX);
             double rectY = Math.min(e.getY(), ShapeStartY);
+            gc.drawImage(drawings, 0, 0);
             gc.strokeRect(rectX, rectY, rectWidth, rectHeight);
-            
-
-            /*gc.setFill(Color.WHITESMOKE);
-		    gc.fillRect(0,0,board.getWidth(),board.getHeight());
-            for (int i=0; i<rectangles.size(); i++) {
-                Rectangle r = rectangles.get(i);
-
-                //gc.setStroke(colorchoice.getValue());
-                //gc.setLineWidth(shapesize);
-                
-                gc.strokeRect(r.getX(), r.getY(), r.getTranslateX(), r.getTranslateY()); // pas bon
-            }
-            gc.strokeRect(ShapeStartX,ShapeStartY,e.getX(),e.getY());*/
-            
-		    
-             
 		}
   
 
         if (usage == "circle" & circle.isSelected()) {
             gc.clearRect(0, 0, board.getWidth(), board.getHeight());
+            gc.setStroke(colorchoice.getValue());
+            gc.setLineWidth(shapesize);
             circleWidth = Math.abs(e.getX() - ShapeStartX);
             circleHeight = Math.abs(e.getY() - ShapeStartY);
             double circleX = Math.min(e.getX(), ShapeStartX);
             double circleY = Math.min(e.getY(), ShapeStartY);
+            gc.drawImage(drawings, 0, 0);
             gc.strokeOval(circleX, circleY, circleWidth, circleHeight);
         }    
 
         if (usage == "triangle" & triangle.isSelected()) {
             gc.clearRect(0, 0, board.getWidth(), board.getHeight());
+            gc.setStroke(colorchoice.getValue());
+            gc.setLineWidth(shapesize);
             triangleWidth = Math.abs(e.getX() - ShapeStartX);
             triangleHeight = Math.abs(e.getY() - ShapeStartY);
             double triangleX = Math.min(e.getX(), ShapeStartX);
@@ -404,6 +400,7 @@ public class MainSceneController {
             double sideLength = Math.sqrt(Math.pow(e.getX() - triangleX, 2) + Math.pow(e.getY() - triangleY, 2));
             double[] xPoints = {triangleX, e.getX(), triangleX + sideLength};
             double[] yPoints = {triangleY, e.getY(), triangleY + sideLength};
+            gc.drawImage(drawings, 0, 0);
             gc.strokePolygon(xPoints, yPoints, 3);
         }    
 
@@ -411,10 +408,10 @@ public class MainSceneController {
             //gc.setFill(Color.WHITESMOKE);
 		    //gc.fillRect(0,0,board.getWidth(),board.getHeight());
             // ici rajouter peutetre fonction qui redessine tout ce qu'il y avait avant
-            for (int i=0; i<lignes.size(); i++) {
-                    Line l=lignes.get(i);
-                    gc.strokeLine(l.getStartX(),l.getStartY(),l.getEndX(),l.getEndY());
-            } 
+            gc.clearRect(0, 0, board.getWidth(), board.getHeight());
+            gc.setStroke(colorchoice.getValue());
+            gc.setLineWidth(shapesize);
+            gc.drawImage(drawings, 0, 0);
             gc.strokeLine(ShapeStartX,ShapeStartY,e.getX(),e.getY());
             }
     }
@@ -423,10 +420,18 @@ public class MainSceneController {
     @FXML
     void endDrawRec(MouseEvent e) {
         if (usage == "line"){
-            lignes.add(new Line(ShapeStartX,ShapeStartY,e.getX(),e.getY()));
+            // lignes.add(new Line(ShapeStartX,ShapeStartY,e.getX(),e.getY()));
+            drawings = board.snapshot(null, null);
         }
         if (usage == "rect"){
-            rectangles.add(new Rectangle(ShapeStartX,ShapeStartY,e.getX(),e.getY()));
+            // rectangles.add(new Rectangle(ShapeStartX,ShapeStartY,e.getX(),e.getY()));
+            drawings = board.snapshot(null, null);
+        }
+        if (usage == "circle"){
+            drawings = board.snapshot(null, null);
+        }
+        if (usage == "triangle"){
+            drawings = board.snapshot(null, null);
         }
 		Draw(e); 
 	}
@@ -459,7 +464,6 @@ public class MainSceneController {
         }
     }
 
-
     @FXML
     void handleZoomInButtonAction(ActionEvent event) {
 
@@ -469,15 +473,6 @@ public class MainSceneController {
     void initialize() {
         drawings = new WritableImage((int) board.getWidth(), (int) board.getHeight());
         gc = board.getGraphicsContext2D();
-        //Redessine toutes les lignes créées jusqu'à présent
-		    
-        /*gc = board.getGraphicsContext2D();
-        board.setOnMouseDragged(this::draw);
-        board.setStyle("-fx-background-color: black;");
-        assert board != null : "fx:id=\"board\" was not injected: check your FXML file 'MainScene.fxml'.";
-        assert btnUnZoom != null : "fx:id=\"btnUnZoom\" was not injected: check your FXML file 'MainScene.fxml'.";
-        assert btnZoom != null : "fx:id=\"btnZoom\" was not injected: check your FXML file 'MainScene.fxml'.";
-*/
     }
 
 }

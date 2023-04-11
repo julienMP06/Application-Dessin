@@ -132,7 +132,14 @@
                               </ImageView>
                            </graphic>
                         </CheckMenuItem>
-                        <CheckMenuItem fx:id="line" mnemonicParsing="false" onAction="#LineButton" text="Ligne" />
+                        <CheckMenuItem fx:id="line" mnemonicParsing="false" onAction="#LineButton" text="Ligne">
+                           <graphic>
+                              <ImageView fitHeight="37.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@Image/line.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic></CheckMenuItem>
                     </items>
                      <graphic>
                         <ImageView fitHeight="37.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
@@ -154,6 +161,18 @@
                            </image>
                         </ImageView>
                      </graphic>
+                  </Button>
+                  <Button fx:id="clearBut" mnemonicParsing="false" onAction="#ClearButton" prefHeight="33.0" prefWidth="40.0" style="-fx-background-color: #C0C0C0;" styleClass="pen">
+                     <graphic>
+                        <ImageView fitHeight="37.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@Image/restore_page.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                     <HBox.margin>
+                        <Insets left="5.0" />
+                     </HBox.margin>
                   </Button>
                </children>
                <HBox.margin>
