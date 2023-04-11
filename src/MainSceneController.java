@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Vector;
 
 import javax.imageio.ImageIO;
 
@@ -14,6 +15,7 @@ import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Slider;
@@ -26,18 +28,22 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
-
+import java.util.Vector;
 
 public class MainSceneController {
 
     GraphicsContext gc;
-    private String usage = "pen"; //default
-    private double erasersize = 15; //default
-    private double pensize = 10; //default
     private double radius;
+
+    // default settings 
+    private String usage = "None"; 
+    private double erasersize = 15; 
+    private double pensize = 10; 
+    private double shapesize = 5; 
     
 
     @FXML
@@ -74,13 +80,16 @@ public class MainSceneController {
     private ToggleButton pen;
 
     @FXML
-    private MenuItem RecButton;
+    private CheckMenuItem rectangle;
 
     @FXML
-    private MenuItem CircleButton;
+    private CheckMenuItem circle;
 
     @FXML
-    private MenuItem TriangleButton;
+    private CheckMenuItem triangle;
+
+    @FXML
+    private CheckMenuItem line;
 
     @FXML
     private HBox MenusTools;
@@ -93,19 +102,24 @@ public class MainSceneController {
 
     private WritableImage drawings;
 
+    private boolean rectselected, circleselected, triangleselected = false;
+
     // Variables pour la création de rectangle
-    private boolean isDrawingRect = false;
-    private double rectStartX, rectStartY;
+    private double ShapeStartX, ShapeStartY;
+
+
+    //private double rectStartX, rectStartY;
     private double rectWidth, rectHeight;
-
-    private double circleStartX, circleStartY;
     private double circleWidth, circleHeight;
-
-    private double triangleStartX, triangleStartY;
     private double triangleWidth, triangleHeight;
 
+    Vector<Rectangle> rectangles = new Vector<Rectangle>();
+    Vector<Line> lignes = new Vector<Line>();
+    Vector<Line> lignes2 = new Vector<Line>();
+    
+
     @FXML 
-    void Changesize(MouseEvent event){
+    void Changesize(MouseEvent e){
         if (eraser.isSelected()){
             System.out.println("erasersize changing");
             erasersize = Size.getValue();
@@ -115,36 +129,9 @@ public class MainSceneController {
             System.out.println("pensize changing");
             pensize = Size.getValue();
         }
-    }
-
-    @FXML
-    void PenButton(ActionEvent event) {
-        if (pen.isSelected()){
-            Size.setValue(pensize);
-            usage = "pen";
-            eraser.setSelected(false); //eviter que pen et eraser soient visiblement selectionnes en meme temps
-            eraserviewer.setVisible(false);
-            System.out.println("pen selected");
-        }else{
-            usage = "None";
-            System.out.println("no tool selected");
-        }
-    }
-
-    @FXML
-    void EraserButton(ActionEvent event) {
-        Background.fill(Color.BLUEVIOLET);
-        if (eraser.isSelected()){
-            Size.setValue(erasersize);
-            usage = "eraser";
-            eraserviewer.toFront();
-            eraserviewer.setVisible(true);
-            pen.setSelected(false); //eviter que deux pen et eraser soient visiblement selectionnes en meme temps
-            System.out.println("eraser selected");
-        }else{
-            eraserviewer.setVisible(false);
-            usage = "None";
-            System.out.println("no tool selected");
+        if (rectangle.isSelected() | circle.isSelected() | triangle.isSelected() | line.isSelected()){
+            System.out.println("shapesize changing");
+            shapesize = Size.getValue();
         }
     }
 
@@ -170,10 +157,161 @@ public class MainSceneController {
         }
     }
 
+    void ToolManager(String tool){
+        usage = tool;
+
+        if (tool == "pen"){
+            Size.setValue(pensize);
+
+            eraser.setSelected(false); 
+            rectangle.setSelected(false);
+            circle.setSelected(false);
+            triangle.setSelected(false);
+            line.setSelected(false);
+
+            eraserviewer.setVisible(false);
+
+        }
+        if (tool == "eraser"){
+            Size.setValue(erasersize);
+
+            pen.setSelected(false); 
+            rectangle.setSelected(false);
+            circle.setSelected(false);
+            triangle.setSelected(false);
+            line.setSelected(false);
+
+            //eraserviewer.toFront();
+            eraserviewer.setVisible(true);
+
+        }
+        if (tool == "rect"){
+            Size.setValue(shapesize);
+
+            circle.setSelected(false);
+            triangle.setSelected(false);
+            pen.setSelected(false); 
+            eraser.setSelected(false);
+            line.setSelected(false);
+        
+            eraserviewer.setVisible(false);
+
+        }
+        if (tool == "circle"){
+            Size.setValue(shapesize);
+            
+            rectangle.setSelected(false);
+            triangle.setSelected(false);
+            pen.setSelected(false); 
+            eraser.setSelected(false);
+            line.setSelected(false);
+            
+            eraserviewer.setVisible(false);
+
+        }
+        if (tool == "triangle"){
+            Size.setValue(shapesize);
+
+            rectangle.setSelected(false);
+            circle.setSelected(false);
+            pen.setSelected(false); 
+            eraser.setSelected(false);
+            line.setSelected(false);
+               
+            eraserviewer.setVisible(false);
+        }
+
+        if (tool == "line"){
+            Size.setValue(shapesize);
+
+            rectangle.setSelected(false);
+            circle.setSelected(false);
+            triangle.setSelected(false);
+            pen.setSelected(false); 
+            eraser.setSelected(false);
+               
+            eraserviewer.setVisible(false);
+        }        
+    }
+
+
+// SECTION BOUTONS //
+
     @FXML
-    void Draw(MouseEvent e) {
-        gc = board.getGraphicsContext2D();
-        radius = eraserviewer.getRadius();
+    void PenButton(ActionEvent event) {
+        if (pen.isSelected()){
+            ToolManager("pen");
+            System.out.println("pen selected");
+        }else{
+            usage = "None";
+            System.out.println("no tool selected");
+        }
+    }
+
+    @FXML
+    void EraserButton(ActionEvent event) {
+        if (eraser.isSelected()){
+            ToolManager("eraser");
+            System.out.println("eraser selected");
+        }else{
+            eraserviewer.setVisible(false);
+            usage = "None";
+            System.out.println("no tool selected");
+        }
+    }
+
+    @FXML
+    void RecButton(ActionEvent event){
+        if (rectangle.isSelected()){
+            System.out.println("rectangle coche");
+            ToolManager("rect");
+        }else{
+            usage = "None";
+        } 
+    }
+
+    @FXML
+    void CircleButton(ActionEvent event){
+        if (circle.isSelected()){
+            System.out.println("cercle coche");
+            ToolManager("circle");
+        }else{
+            usage = "None";
+        } 
+        
+    }
+    @FXML
+    void TriangleButton(ActionEvent event){
+        if (triangle.isSelected()){
+            System.out.println("triangle coche");
+            ToolManager("triangle");
+        }else{
+            usage = "None";
+        }
+        
+    }
+
+    @FXML
+    void LineButton(ActionEvent event){
+        if (line.isSelected()){
+            System.out.println("line coche");
+            ToolManager("line");
+        }else{
+            usage = "None";
+        } 
+    }
+
+    // Implémenter un bouton effacer toute la page
+    @FXML
+    void ClearButton(ActionEvent event) {
+        gc.clearRect(0, 0, board.getWidth(), board.getHeight());
+    }
+
+
+// SECTION DESSINS //
+
+    @FXML 
+    void StartDraw(MouseEvent e){
         if (usage == "pen" & pen.isSelected()) {
             gc.setFill(colorchoice.getValue());
             if (e.getY() >= 0) {
@@ -182,122 +320,122 @@ public class MainSceneController {
                 gc.fillOval(e.getX() - pensize/2, - pensize/2, pensize, pensize);
             }
         }  
+
         if (usage == "eraser" & eraser.isSelected()) {
+            radius = eraserviewer.getRadius();
+            Eraserview(e);
             gc.setFill(Color.WHITESMOKE);
             gc.fillOval(e.getX()-radius, e.getY()-radius, radius * 2, radius * 2);  
         }
-        if (usage == "rect" & isDrawingRect) {
+
+        if (usage == "line" | usage == "rect" | usage == "circle" | usage == "triangle"){
+            ShapeStartX = e.getX();
+            ShapeStartY = e.getY();
+        }
+    }
+
+    @FXML
+    void Draw(MouseEvent e) {
+        if (usage == "pen" & pen.isSelected()) {
+            gc.setFill(colorchoice.getValue());
+            if (e.getY() >= 0) {
+                gc.fillOval(e.getX() - pensize/2, e.getY()- pensize/2, pensize, pensize);
+            } else {
+                gc.fillOval(e.getX() - pensize/2, - pensize/2, pensize, pensize);
+            }
+        }  
+
+        if (usage == "eraser" & eraser.isSelected()) {
+            radius = eraserviewer.getRadius();
+            Eraserview(e);
+            gc.setFill(Color.WHITESMOKE);
+            gc.fillOval(e.getX()-radius, e.getY()-radius, radius * 2, radius * 2);  
+        }
+
+        if (usage == "rect" & rectangle.isSelected()) {
+            /*
             // drawings = board.snapshot(null, null);
             gc.clearRect(0, 0, board.getWidth(), board.getHeight());
             // gc.drawImage(drawings, 0, 0);
-            rectWidth = Math.abs(e.getX() - rectStartX);
-            rectHeight = Math.abs(e.getY() - rectStartY);
-            double rectX = Math.min(e.getX(), rectStartX);
-            double rectY = Math.min(e.getY(), rectStartY);
+            rectWidth = Math.abs(e.getX() - ShapeStartX);
+            rectHeight = Math.abs(e.getY() - ShapeStartY);
+            double rectX = Math.min(e.getX(), ShapeStartX);
+            double rectY = Math.min(e.getY(), ShapeStartY);
             gc.setStroke(colorchoice.getValue());
-            gc.setLineWidth(pensize);
+            gc.setLineWidth(shapesize);
             gc.strokeRect(rectX, rectY, rectWidth, rectHeight);
-        }    
-        if (usage == "circle") {
+            */
+
+            gc.setFill(Color.WHITESMOKE);
+		    gc.fillRect(0,0,board.getWidth(),board.getHeight());
+            for (int i=0; i<rectangles.size(); i++) {
+                Rectangle r = rectangles.get(i);
+
+                //gc.setStroke(colorchoice.getValue());
+                //gc.setLineWidth(shapesize);
+                
+                gc.strokeRect(r.getX(), r.getY(), r.getTranslateX(), r.getTranslateY()); // pas bon
+            }
+            gc.strokeRect(ShapeStartX,ShapeStartY,e.getX(),e.getY());
+            
+		    
+             
+		}
+  
+
+        if (usage == "circle" & circle.isSelected()) {
             gc.clearRect(0, 0, board.getWidth(), board.getHeight());
-            circleWidth = Math.abs(e.getX() - circleStartX);
-            circleHeight = Math.abs(e.getY() - circleStartY);
-            double circleX = Math.min(e.getX(), circleStartX);
-            double circleY = Math.min(e.getY(), circleStartY);
+            circleWidth = Math.abs(e.getX() - ShapeStartX);
+            circleHeight = Math.abs(e.getY() - ShapeStartY);
+            double circleX = Math.min(e.getX(), ShapeStartX);
+            double circleY = Math.min(e.getY(), ShapeStartY);
             gc.setStroke(colorchoice.getValue());
-            gc.setLineWidth(pensize);
+            gc.setLineWidth(shapesize);
             gc.strokeOval(circleX, circleY, circleWidth, circleHeight);
         }    
-        if (usage == "triangle") {
+
+        if (usage == "triangle" & triangle.isSelected()) {
             gc.clearRect(0, 0, board.getWidth(), board.getHeight());
-            triangleWidth = Math.abs(e.getX() - triangleStartX);
-            triangleHeight = Math.abs(e.getY() - triangleStartY);
-            double triangleX = Math.min(e.getX(), triangleStartX);
-            double triangleY = Math.min(e.getY(), triangleStartY);
+            triangleWidth = Math.abs(e.getX() - ShapeStartX);
+            triangleHeight = Math.abs(e.getY() - ShapeStartY);
+            double triangleX = Math.min(e.getX(), ShapeStartX);
+            double triangleY = Math.min(e.getY(), ShapeStartY);
             double sideLength = Math.sqrt(Math.pow(e.getX() - triangleX, 2) + Math.pow(e.getY() - triangleY, 2));
             double[] xPoints = {triangleX, e.getX(), triangleX + sideLength};
             double[] yPoints = {triangleY, e.getY(), triangleY + sideLength};
             gc.setStroke(colorchoice.getValue());
-            gc.setLineWidth(pensize);
+            gc.setLineWidth(shapesize);
             gc.strokePolygon(xPoints, yPoints, 3);
         }    
-        Eraserview(e);
+
+        if ((usage == "line" & line.isSelected())){
+            gc.setFill(Color.WHITESMOKE);
+		    gc.fillRect(0,0,board.getWidth(),board.getHeight());
+            // ici rajouter peutetre fonction qui redessine tout ce qu'il y avait avant
+		    //Redessine toutes les lignes créées jusqu'à présent
+		    if (usage == "line"){
+                for (int i=0; i<lignes.size(); i++) {
+                    Line l=lignes.get(i);
+                    gc.strokeLine(l.getStartX(),l.getStartY(),l.getEndX(),l.getEndY());
+                } 
+                gc.strokeLine(ShapeStartX,ShapeStartY,e.getX(),e.getY());
+            }
+        }
     }
+
+    @FXML
+    void endDrawRec(MouseEvent e) {
+        if (usage == "line"){
+            lignes.add(new Line(ShapeStartX,ShapeStartY,e.getX(),e.getY()) );
+        }
+        if (usage == "rect"){
+            rectangles.add(new Rectangle(ShapeStartX,ShapeStartY,e.getX(),e.getY()));
+        }
+		Draw(e); //Redessine toutes les lignes
+	}
     
-    
-    @FXML
-    void DrawRec(ActionEvent event) {
-        // Changer l'outil de dessin
-        usage = "rect";
-        isDrawingRect = true;
-        pen.setSelected(false);
-        eraser.setSelected(false);
-        eraserviewer.setVisible(false);
-        
-        // Écouter les événements de la souris pour dessiner le rectangle
-        board.setOnMousePressed(e -> {
-            rectStartX = e.getX();
-            rectStartY = e.getY();
-            isDrawingRect = true;
-        });
-        
-        board.setOnMouseReleased(e -> {
-            isDrawingRect = false;
-        });
-    }
+// SECTION FICHIER //
 
-    @FXML
-    void DrawCircle(ActionEvent event) {
-        // Changer l'outil de dessin
-        usage = "circle";
-        pen.setSelected(false);
-        eraser.setSelected(false);
-        eraserviewer.setVisible(false);
-            
-        // Écouter les événements de la souris pour dessiner le rectangle
-        board.setOnMousePressed(e -> {
-            circleStartX = e.getX();
-            circleStartY = e.getY();
-        });
-            
-        board.setOnMouseReleased(e -> {
-        });
-    }
-
-    @FXML
-    void DrawTriangle(ActionEvent event) {
-        // Changer l'outil de dessin
-        usage = "triangle";
-        pen.setSelected(false);
-        eraser.setSelected(false);
-        eraserviewer.setVisible(false);
-            
-        // Écouter les événements de la souris pour dessiner le rectangle
-        board.setOnMousePressed(e -> {
-            triangleStartX = e.getX();
-            triangleStartY = e.getY();
-        });
-            
-        board.setOnMouseReleased(e -> {
-        });
-    }
-
-    @FXML
-    void RectButton(ActionEvent event) {
-        usage = "rect";
-    }
-
-    @FXML
-    void CircleButton(ActionEvent event) {
-        usage = "rect";
-    }
-
-    // Implémenter un bouton effacer toute la page
-    @FXML
-    void ClearButton(ActionEvent event) {
-        gc.clearRect(0, 0, board.getWidth(), board.getHeight());
-    }
-    
     @FXML
     private void saveDrawing(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
@@ -333,6 +471,9 @@ public class MainSceneController {
     @FXML
     void initialize() {
         drawings = new WritableImage((int) board.getWidth(), (int) board.getHeight());
+        gc = board.getGraphicsContext2D();
+        //Redessine toutes les lignes créées jusqu'à présent
+		    
         /*gc = board.getGraphicsContext2D();
         board.setOnMouseDragged(this::draw);
         board.setStyle("-fx-background-color: black;");
