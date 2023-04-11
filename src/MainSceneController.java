@@ -398,7 +398,8 @@ public class MainSceneController {
             triangleHeight = Math.abs(e.getY() - ShapeStartY);
             double triangleX = Math.min(e.getX(), ShapeStartX);
             double triangleY = Math.min(e.getY(), ShapeStartY);
-            // Dans le cas ou on dessine un triangle vers le haut il faut changer l'ordre des points  
+            gc.drawImage(drawings, 0, 0);
+            // Dans le cas ou on dessine un triangle vers le haut il faut changer l'ordre des points pour piouvoir avoir un triangle dans le bon sens
             if (e.getY() < ShapeStartY) {
                 gc.strokePolygon(new double[]{triangleX, triangleX + triangleWidth, triangleX + triangleWidth/2},
                                  new double[]{triangleY, triangleY, triangleY + triangleHeight}, 
