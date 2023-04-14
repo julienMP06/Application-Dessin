@@ -12,6 +12,7 @@ import javax.imageio.ImageIO;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
@@ -44,8 +45,8 @@ public class MainSceneController {
     private String usage = "None"; 
     private double erasersize = 15; 
     private double pensize = 10; 
-    private double shapesize = 5; 
-    private Color color = Color.BLACK;
+    private double shapesize = 5;
+    private double selectsize = 10; 
     
 
     @FXML
@@ -85,6 +86,9 @@ public class MainSceneController {
     private ToggleButton pen;
 
     @FXML
+    private ToggleButton selection;
+
+    @FXML
     private CheckMenuItem rectangle;
 
     @FXML
@@ -105,9 +109,10 @@ public class MainSceneController {
     @FXML
     private Circle eraserviewer;
 
-    private WritableImage drawings;
+    @FXML
+    private Rectangle selectviewer;
 
-    private boolean rectselected, circleselected, triangleselected = false;
+    private WritableImage drawings;
 
     // Variables pour la création de rectangle
     private double ShapeStartX, ShapeStartY;
@@ -137,6 +142,10 @@ public class MainSceneController {
             System.out.println("shapesize changing");
             shapesize = Size.getValue();
         }
+
+        if (selection.isSelected()){
+            selectsize = Size.getValue();
+        }
     }
 
     @FXML 
@@ -159,6 +168,10 @@ public class MainSceneController {
                 eraserviewer.setCenterY(e.getY());
             }  
         }
+        if (selection.isSelected()){
+            selectviewer.setX(e.getX());
+            selectviewer.setY(e.getY());
+        }
     }
 
     void ToolManager(String tool){
@@ -172,8 +185,10 @@ public class MainSceneController {
             circle.setSelected(false);
             triangle.setSelected(false);
             line.setSelected(false);
+            selection.setSelected(false);
 
             eraserviewer.setVisible(false);
+            selectviewer.setVisible(false);
 
         }
         if (tool == "eraser"){
@@ -183,33 +198,36 @@ public class MainSceneController {
             circle.setSelected(false);
             triangle.setSelected(false);
             line.setSelected(false);
+            selection.setSelected(false);
 
-            //eraserviewer.toFront();
             eraserviewer.setVisible(true);
+            selectviewer.setVisible(false);
 
         }
         if (tool == "rect"){
-
-            drawings = board.snapshot(null, null);
 
             circle.setSelected(false);
             triangle.setSelected(false);
             pen.setSelected(false); 
             eraser.setSelected(false);
             line.setSelected(false);
+            selection.setSelected(false);
         
             eraserviewer.setVisible(false);
+            selectviewer.setVisible(false);
 
         }
         if (tool == "circle"){
-            
+
             rectangle.setSelected(false);
             triangle.setSelected(false);
             pen.setSelected(false); 
             eraser.setSelected(false);
             line.setSelected(false);
+            selection.setSelected(false);
             
             eraserviewer.setVisible(false);
+            selectviewer.setVisible(false);
 
         }
         if (tool == "triangle"){
@@ -219,8 +237,10 @@ public class MainSceneController {
             pen.setSelected(false); 
             eraser.setSelected(false);
             line.setSelected(false);
+            selection.setSelected(false);
                
             eraserviewer.setVisible(false);
+            selectviewer.setVisible(false);
         }
         if (tool == "line"){
 
@@ -229,9 +249,23 @@ public class MainSceneController {
             triangle.setSelected(false);
             pen.setSelected(false); 
             eraser.setSelected(false);
+            selection.setSelected(false);
                
             eraserviewer.setVisible(false);
-        }        
+            selectviewer.setVisible(false);
+        }    
+        if (tool == "select"){
+
+            rectangle.setSelected(false);
+            circle.setSelected(false);
+            triangle.setSelected(false);
+            pen.setSelected(false); 
+            eraser.setSelected(false);
+            line.setSelected(false);
+            
+            eraserviewer.setVisible(false);
+            selectviewer.setVisible(false);
+        }    
     }
 
 
@@ -242,10 +276,10 @@ public class MainSceneController {
         Size.setValue(pensize);
         if (pen.isSelected()){
             ToolManager("pen");
-            System.out.println("pen selected");
+            //System.out.println("pen selected");
         }else{
             usage = "None";
-            System.out.println("no tool selected");
+            //System.out.println("no tool selected");
         }
     }
 
@@ -254,11 +288,11 @@ public class MainSceneController {
         Size.setValue(erasersize);
         if (eraser.isSelected()){
             ToolManager("eraser");
-            System.out.println("eraser selected");
+            //System.out.println("eraser selected");
         }else{
             eraserviewer.setVisible(false);
             usage = "None";
-            System.out.println("no tool selected");
+            //System.out.println("no tool selected");
         }
     }
 
@@ -266,7 +300,7 @@ public class MainSceneController {
     void RecButton(ActionEvent event){
         Size.setValue(shapesize);
         if (rectangle.isSelected()){
-            System.out.println("rectangle coche");
+            //System.out.println("rectangle coche");
             ToolManager("rect");
         }else{
             usage = "None";
@@ -277,7 +311,7 @@ public class MainSceneController {
     void CircleButton(ActionEvent event){
         Size.setValue(shapesize);
         if (circle.isSelected()){
-            System.out.println("cercle coche");
+            //System.out.println("cercle coche");
             ToolManager("circle");
         }else{
             usage = "None";
@@ -288,7 +322,7 @@ public class MainSceneController {
     void TriangleButton(ActionEvent event){
         Size.setValue(shapesize);
         if (triangle.isSelected()){
-            System.out.println("triangle coche");
+            //System.out.println("triangle coche");
             ToolManager("triangle");
         }else{
             usage = "None";
@@ -300,8 +334,19 @@ public class MainSceneController {
     void LineButton(ActionEvent event){
         Size.setValue(shapesize);
         if (line.isSelected()){
-            System.out.println("line coche");
+            //System.out.println("line coche");
             ToolManager("line");
+        }else{
+            usage = "None";
+        } 
+    }
+
+    @FXML
+    void SelectButton(ActionEvent event){
+        Size.setValue(selectsize);
+        if (selection.isSelected()){
+            System.out.println("select coche");
+            ToolManager("select");
         }else{
             usage = "None";
         } 
@@ -310,9 +355,12 @@ public class MainSceneController {
     // Implémentation d'un bouton effacer toute la page
     @FXML
     void ClearButton(ActionEvent event) {
-        gc.clearRect(0, 0, board.getWidth(), board.getHeight());
+        gc.setFill(Color.WHITESMOKE);
+        gc.fillRect(0, 0, board.getWidth(), board.getHeight());
         drawings = board.snapshot(null, null);
     }
+
+    
 
 
 // SECTION DESSINS //
@@ -331,26 +379,30 @@ public class MainSceneController {
 
         if (usage == "eraser" & eraser.isSelected()) {
             Size.setValue(erasersize);
-            gc.setFill(colorchoice.getValue());
             radius = eraserviewer.getRadius();
             Eraserview(e);
-            gc.setFill(Color.WHITESMOKE);
             gc.fillOval(e.getX()-radius, e.getY()-radius, radius * 2, radius * 2);  
         }
 
         if (usage == "line" | usage == "rect" | usage == "circle" | usage == "triangle"){
             Size.setValue(shapesize);
-            gc.setFill(colorchoice.getValue());
             ShapeStartX = e.getX();
             ShapeStartY = e.getY();
         }
+
+        if (usage == "select"){
+            Size.setValue(selectsize);
+            ShapeStartX = e.getX();
+            ShapeStartY = e.getY();
+        }
+
     }
 
     @FXML
     void Draw(MouseEvent e) {
         if (usage == "pen" & pen.isSelected()) {
+            drawings = board.snapshot(null, null);
             // D'apres eytan il faut utiliser le moveto et lineto avec un stroke
-            //gc.setFill(colorchoice.getValue());
             if (e.getY() >= 0) {
                 gc.fillOval(e.getX() - pensize/2, e.getY()- pensize/2, pensize, pensize);
             } else {
@@ -359,13 +411,16 @@ public class MainSceneController {
         }  
 
         if (usage == "eraser" & eraser.isSelected()) {
+            drawings = board.snapshot(null, null);
             radius = eraserviewer.getRadius();
             Eraserview(e);
             gc.setFill(Color.WHITESMOKE);
             gc.fillOval(e.getX()-radius, e.getY()-radius, radius * 2, radius * 2);  
+            
         }
 
         if (usage == "rect" & rectangle.isSelected()) {
+            gc.setFill(Color.WHITESMOKE);
             gc.clearRect(0, 0, board.getWidth(), board.getHeight());
             gc.setStroke(colorchoice.getValue());
             gc.setLineWidth(shapesize);
@@ -379,6 +434,7 @@ public class MainSceneController {
   
 
         if (usage == "circle" & circle.isSelected()) {
+            gc.setFill(Color.WHITESMOKE);
             gc.clearRect(0, 0, board.getWidth(), board.getHeight());
             gc.setStroke(colorchoice.getValue());
             gc.setLineWidth(shapesize);
@@ -391,6 +447,7 @@ public class MainSceneController {
         }    
 
         if (usage == "triangle" && triangle.isSelected()) {
+            gc.setFill(Color.WHITESMOKE);
             gc.clearRect(0, 0, board.getWidth(), board.getHeight());
             gc.setStroke(colorchoice.getValue());
             gc.setLineWidth(shapesize);
@@ -412,21 +469,42 @@ public class MainSceneController {
         }
         
         if ((usage == "line" & line.isSelected())){
-            //gc.setFill(Color.WHITESMOKE);
-		    //gc.fillRect(0,0,board.getWidth(),board.getHeight());
-            // ici rajouter peutetre fonction qui redessine tout ce qu'il y avait avant
+            gc.setFill(Color.WHITESMOKE);
             gc.clearRect(0, 0, board.getWidth(), board.getHeight());
             gc.setStroke(colorchoice.getValue());
             gc.setLineWidth(shapesize);
             gc.drawImage(drawings, 0, 0);
             gc.strokeLine(ShapeStartX,ShapeStartY,e.getX(),e.getY());
             }
+
+        if (usage == "select" & selection.isSelected()) {
+            /*gc.setFill(Color.WHITESMOKE);
+            gc.clearRect(0, 0, board.getWidth(), board.getHeight());
+            gc.setStroke(Color.WHITE);
+            gc.setLineWidth(selectsize);
+            gc.setLineDashes(30, 30);
+           
+            rectWidth = Math.abs(e.getX() - ShapeStartX);
+            rectHeight = Math.abs(e.getY() - ShapeStartY);
+            double rectX = Math.min(e.getX(), ShapeStartX);
+            double rectY = Math.min(e.getY(), ShapeStartY);
+            gc.drawImage(drawings, 0, 0);
+            gc.strokeRect(rectX, rectY, rectWidth, rectHeight);
+            gc.setLineDashes(0, 0);*/
+            board.setCursor(Cursor.NONE);
+            selectviewer.setVisible(true);
+            selectviewer.setWidth(e.getX()-selectviewer.getX());
+            selectviewer.setHeight(e.getY()-selectviewer.getY());
+        }
     }
 
 
     @FXML
     void endDrawRec(MouseEvent e) {
-        if (usage == "line"){
+        if (usage == "select"){
+            selectviewer.setVisible(false);
+            board.setCursor(Cursor.DEFAULT);
+        }else{/*if (usage == "line"){
             // lignes.add(new Line(ShapeStartX,ShapeStartY,e.getX(),e.getY()));
             drawings = board.snapshot(null, null);
         }
@@ -439,8 +517,10 @@ public class MainSceneController {
         }
         if (usage == "triangle"){
             drawings = board.snapshot(null, null);
-        }
-		Draw(e); 
+        }*/
+            drawings = board.snapshot(null, null);
+		    Draw(e);
+        } 
 	}
     
 // SECTION FICHIER //
@@ -488,6 +568,8 @@ public class MainSceneController {
     void initialize() {
         drawings = new WritableImage((int) board.getWidth(), (int) board.getHeight());
         gc = board.getGraphicsContext2D();
+        gc.setFill(Color.WHITESMOKE);
+        gc.fillRect(0, 0, board.getWidth(), board.getHeight());
     }
 
 }

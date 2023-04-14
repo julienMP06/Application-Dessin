@@ -18,6 +18,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.Rectangle?>
 
 <AnchorPane fx:id="window" maxHeight="-1.0" maxWidth="-1.0" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="MainSceneController">
    <children>
@@ -150,10 +151,7 @@
                      </graphic>
                   </MenuButton>
                   <Separator orientation="VERTICAL" prefWidth="20.0" />
-                  <Button mnemonicParsing="false" style="-fx-background-color: #C0C0C0;" styleClass="pen">
-                     <HBox.margin>
-                        <Insets left="5.0" right="5.0" />
-                     </HBox.margin>
+                  <ToggleButton fx:id="selection" layoutX="119.0" layoutY="16.0" mnemonicParsing="false" onAction="#SelectButton" prefHeight="47.0" prefWidth="47.0" style="-fx-background-color: #C0C0C0;" styleClass="pen">
                      <graphic>
                         <ImageView fitHeight="37.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -161,7 +159,7 @@
                            </image>
                         </ImageView>
                      </graphic>
-                  </Button>
+                  </ToggleButton>
                   <Button fx:id="clearBut" mnemonicParsing="false" onAction="#ClearButton" prefHeight="33.0" prefWidth="40.0" style="-fx-background-color: #C0C0C0;" styleClass="pen">
                      <graphic>
                         <ImageView fitHeight="37.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
@@ -216,5 +214,9 @@
          <cursor>
             <Cursor fx:constant="NONE" />
          </cursor></Circle>
+      <Rectangle fx:id="selectviewer" arcHeight="5.0" arcWidth="5.0" fill="#0f83ea00" height="20.0" layoutY="60.0" stroke="WHITE" strokeType="INSIDE" strokeWidth="5.0" width="20.0">
+         <cursor>
+            <Cursor fx:constant="DEFAULT" />
+         </cursor></Rectangle>
    </children>
 </AnchorPane>
