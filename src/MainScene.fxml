@@ -181,7 +181,7 @@
       </HBox>
       <HBox alignment="CENTER" layoutX="1114.0" layoutY="669.0" prefHeight="36.0" prefWidth="152.0">
          <children>
-            <Button fx:id="btnUnZoom" mnemonicParsing="false" onAction="#handleZoomInButtonAction" prefHeight="20.0" prefWidth="21.0" styleClass="round-button">
+            <Button fx:id="btnUnZoom" mnemonicParsing="false" onAction="#ZoomOut" prefHeight="20.0" prefWidth="21.0" styleClass="round-button">
                <graphic>
                   <ImageView fitHeight="19.0" fitWidth="19.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -200,7 +200,7 @@
                   <Insets left="5.0" right="5.0" />
                </HBox.margin>
             </Separator>
-            <Button fx:id="btnZoom" mnemonicParsing="false" onAction="#handleZoomInButtonAction" prefHeight="26.0" prefWidth="29.0" styleClass="round-button">
+            <Button fx:id="btnZoom" mnemonicParsing="false" onAction="#ZoomIn" prefHeight="26.0" prefWidth="29.0" styleClass="round-button">
                <graphic>
                   <ImageView fitHeight="19.0" fitWidth="19.0" pickOnBounds="true" preserveRatio="true">
                      <image>

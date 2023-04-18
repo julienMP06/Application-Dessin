@@ -55,6 +55,8 @@ public class MainSceneController {
     @FXML
     private URL location;
 
+    private double zoomFactor = 1.0;
+
     @FXML
     private Canvas board;
     
@@ -560,8 +562,17 @@ public class MainSceneController {
     }
 
     @FXML
-    void handleZoomInButtonAction(ActionEvent event) {
+    private void ZoomIn() {
+        zoomFactor *= 1.1;
+        board.setScaleX(zoomFactor);
+        board.setScaleY(zoomFactor);
+    }
 
+    @FXML
+    private void ZoomOut() {
+        zoomFactor /= 1.1;
+        board.setScaleX(zoomFactor);
+        board.setScaleY(zoomFactor);
     }
 
     @FXML
