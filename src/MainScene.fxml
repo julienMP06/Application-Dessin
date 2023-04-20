@@ -28,7 +28,7 @@
       <Circle fx:id="p2" fill="WHITE" layoutY="60.0" onMouseDragged="#SizeSelector" onMouseEntered="#PointSelectorEnter" onMouseExited="#PointSelectorExit" onMousePressed="#BeginResize" onMouseReleased="#SizeSelected" radius="7.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" visible="false" />
       <Circle fx:id="p3" fill="WHITE" layoutY="60.0" onMouseDragged="#SizeSelector" onMouseEntered="#PointSelectorEnter" onMouseExited="#PointSelectorExit" onMousePressed="#BeginResize" onMouseReleased="#SizeSelected" radius="7.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" visible="false" />
       <Circle fx:id="p4" fill="WHITE" layoutY="60.0" onMouseDragged="#SizeSelector" onMouseEntered="#PointSelectorEnter" onMouseExited="#PointSelectorExit" onMousePressed="#BeginResize" onMouseReleased="#SizeSelected" radius="7.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" visible="false" />
-      <HBox fx:id="MenusTools" prefHeight="60.0" prefWidth="1280.0" style="-fx-background-color: #C0C0C0;">
+      <HBox fx:id="MenusTools" prefHeight="60.0" prefWidth="1287.0" style="-fx-background-color: #C0C0C0;">
          <children>
             <HBox alignment="CENTER_LEFT" prefHeight="47.0" prefWidth="327.0">
                <children>
@@ -155,8 +155,10 @@
                            </image>
                         </ImageView>
                      </graphic>
+                     <HBox.margin>
+                        <Insets right="5.0" />
+                     </HBox.margin>
                   </MenuButton>
-                  <Separator orientation="VERTICAL" prefWidth="20.0" />
                   <ToggleButton fx:id="selection" layoutX="119.0" layoutY="16.0" mnemonicParsing="false" onAction="#SelectButton" prefHeight="47.0" prefWidth="47.0" style="-fx-background-color: #C0C0C0;" styleClass="pen">
                      <graphic>
                         <ImageView fitHeight="37.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
@@ -165,7 +167,11 @@
                            </image>
                         </ImageView>
                      </graphic>
+                     <HBox.margin>
+                        <Insets left="5.0" />
+                     </HBox.margin>
                   </ToggleButton>
+                  <Separator orientation="VERTICAL" prefWidth="20.0" />
                   <Button fx:id="clearBut" mnemonicParsing="false" onAction="#ClearButton" prefHeight="33.0" prefWidth="40.0" style="-fx-background-color: #C0C0C0;" styleClass="pen">
                      <graphic>
                         <ImageView fitHeight="37.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
@@ -200,7 +206,7 @@
                   <Insets left="5.0" right="5.0" />
                </HBox.margin>
             </Separator>
-            <Label text="100 %" />
+            <Label fx:id="ZoomLabel" text="100 %" />
             <Separator orientation="VERTICAL" prefHeight="200.0">
                <HBox.margin>
                   <Insets left="5.0" right="5.0" />
@@ -241,5 +247,6 @@
          <cursor>
             <Cursor fx:constant="NONE" />
          </cursor></Circle>
+      <Label fx:id="statutLabel" layoutX="16.0" layoutY="687.0" prefHeight="18.0" prefWidth="200.0" text="..." />
    </children>
 </AnchorPane>

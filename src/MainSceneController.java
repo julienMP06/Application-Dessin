@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
+import javax.xml.crypto.dsig.Transform;
+
+import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -15,8 +18,10 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ColorPicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.control.Slider;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
@@ -30,6 +35,8 @@ import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
+import javafx.scene.transform.Translate;
+
 
 
 public class MainSceneController {
@@ -43,10 +50,14 @@ public class MainSceneController {
     private double pensize = 10; 
     private double shapesize = 5;
     
-    
+    @FXML
+    private Label ZoomLabel;
 
     @FXML
     private ResourceBundle resources;
+
+    @FXML
+    private Label statutLabel;
 
     @FXML
     private URL location;
@@ -302,10 +313,11 @@ public class MainSceneController {
             pen.setSelected(false); 
             eraser.setSelected(false);
             selection.setSelected(false);
-               
+
             eraserviewer.setVisible(false);
             selectviewer.setVisible(false);
             selectrectangle.setVisible(false);
+
         }    
         if (tool == "select"){
 
@@ -319,6 +331,7 @@ public class MainSceneController {
             eraserviewer.setVisible(false);
             selectviewer.setVisible(false);
             selectrectangle.setVisible(false);
+
         }  
     }
 
@@ -420,9 +433,6 @@ public class MainSceneController {
         drawings = board.snapshot(null, null);
     }
 
-    
-
-
 // SECTION DESSINS //
 
     @FXML 
@@ -455,7 +465,6 @@ public class MainSceneController {
             ShapeStartX = e.getX();
             ShapeStartY = e.getY();
         }
-
     }
 
     @FXML
@@ -929,10 +938,15 @@ public class MainSceneController {
         
     }
 
+    private double startX = 0;
+    private double startY = 0;
+
     @FXML
     void StartMoveSelector(MouseEvent e){
         dessins.remove(rectshape);
         redraw();
+        startX = e.getX();
+        startY = e.getY();
     }
 
     @FXML
@@ -940,35 +954,25 @@ public class MainSceneController {
         if (moveselected.isSelected()){
             if (e.getSource() instanceof Rectangle){  //selectedrectangle
                 Rectangle r = (Rectangle) e.getSource();
-                r.setX(2 * e.getX() - r.getX());
-                r.setY(2 * e.getY() - r.getY());
-
-        
+                double offsetX = e.getX() - startX;
+                double offsetY = e.getY() - startY;
+                r.setX(r.getX() + offsetX);
+                r.setY(r.getY() + offsetY);
+    
                 gc.setLineWidth(rectshape.getStrokeWidth());
                 gc.setStroke(rectshape.getStroke());
-                
-
-                
-        
-        /*System.out.print("X =");
-        System.out.print(X);
-        System.out.print(" \n Y =");
-        System.out.println(Y);
-        Width = rectshape.getWidth();
-        Height = rectshape.getHeight();*/
-        
-                
-
-                //gc.setFill(Color.WHITESMOKE);
-                //gc.fillRect(0, 0, board.getWidth(), board.getHeight());
                 gc.drawImage(drawings, 0, 0);
                 gc.setFill(rectshape.getFill());
-                gc.fillRect(e.getX()+rectshape.getStrokeWidth()/2, e.getY()+rectshape.getStrokeWidth()/2, 
+                gc.fillRect(r.getX()+rectshape.getStrokeWidth()/2, r.getY()+rectshape.getStrokeWidth()/2, 
                 rectshape.getWidth()-rectshape.getStrokeWidth(), rectshape.getHeight()-rectshape.getStrokeWidth());
-                gc.strokeRect(2 * e.getX() - r.getX(), 2 * e.getY() - r.getY(), rectshape.getWidth(), rectshape.getHeight());
+                gc.strokeRect(r.getX(), r.getY(), rectshape.getWidth(), rectshape.getHeight());
+    
+                startX = e.getX();
+                startY = e.getY();
             }
         }
     }
+    
 
     @FXML
     void EndMoveSelector(MouseEvent e){
@@ -983,7 +987,6 @@ public class MainSceneController {
     }
     
 // SECTION FICHIER //
-
     @FXML
     private void saveDrawing(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
@@ -1019,18 +1022,34 @@ public class MainSceneController {
     }
 
     @FXML
+    private void updateZoomValueLabel() {
+        ZoomLabel.setText(String.format("%.0f%%", (zoomFactor*100)));
+    }
+
+    @FXML
+    private void updateStatuLabel() {
+        statutLabel.setText(usage);    
+    }
+
+    @FXML
     private void ZoomIn(){
         zoomFactor *= 1.1;
         board.setScaleX(zoomFactor);
         board.setScaleY(zoomFactor);
+        updateZoomValueLabel();
     }
 
     @FXML
     private void ZoomOut(){
-        zoomFactor /= 1.1;
-        board.setScaleX(zoomFactor);
-        board.setScaleY(zoomFactor);
-    }
+        if (zoomFactor*100 <= 100){
+            System.out.println("Impossible");
+        } else {
+            zoomFactor /= 1.1;
+            board.setScaleX(zoomFactor);
+            board.setScaleY(zoomFactor);
+            updateZoomValueLabel();
+        }
+    }    
 
     @FXML
     void initialize() {
