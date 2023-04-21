@@ -227,7 +227,7 @@
             <Cursor fx:constant="DEFAULT" />
          </cursor>
       </Rectangle>
-      <Ellipse fx:id="selectcircle" fill="#1f93ff00" layoutY="60.0" radiusX="100.0" radiusY="80.0" stroke="WHITE" strokeWidth="5.0" visible="false" />
+      <Ellipse fx:id="selectcircle" fill="#1f93ff00" layoutY="60.0" onMouseDragged="#MoveSelector" onMousePressed="#StartMoveSelector" onMouseReleased="#EndMoveSelector" radiusX="100.0" radiusY="80.0" stroke="WHITE" strokeWidth="5.0" visible="false" />
       <MenuButton fx:id="options" layoutY="60.0" mnemonicParsing="false" text="MenuOptions" visible="false">
         <items>
             <CheckMenuItem fx:id="sizeselected" mnemonicParsing="false" onAction="#SelectOptions" text="Redimensionner" />

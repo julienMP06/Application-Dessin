@@ -1375,7 +1375,7 @@ public class MainSceneController {
             linemoved.setStroke(lineshape.getStroke());
             dessins.add(linemoved);
         }else if (shape == "circle"){
-            Ellipse ellipsemoved = new Ellipse(circleshape.getCenterX(), circleshape.getCenterY(), circleshape.getRadiusX(), circleshape.getRadiusY());
+            Ellipse ellipsemoved = new Ellipse(selectcircle.getCenterX(), selectcircle.getCenterY(), circleshape.getRadiusX(), circleshape.getRadiusY());
             ellipsemoved.setStrokeWidth(circleshape.getStrokeWidth());
             ellipsemoved.setStroke(circleshape.getStroke());
             ellipsemoved.setFill(circleshape.getFill());
