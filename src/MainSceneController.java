@@ -386,6 +386,19 @@ public class MainSceneController {
             selectrectangle.setVisible(false);
 
         }  
+        if (tool == "move"){
+            rectangle.setSelected(false);
+            circle.setSelected(false);
+            triangle.setSelected(false);
+            pen.setSelected(false); 
+            eraser.setSelected(false);
+            line.setSelected(false);
+            
+            eraserviewer.setVisible(false);
+            selectviewer.setVisible(false);
+
+            selectrectangle.setVisible(false);
+        }
     }
 
 
@@ -689,11 +702,17 @@ public class MainSceneController {
             selectviewer.setWidth(e.getX()-selectviewer.getX());
             selectviewer.setHeight(e.getY()-selectviewer.getY());
         }
+
+        if (usage == "move" & moveButton.isSelected()){
+            double dx = e.getX() - ShapeStartX;
+            double dy = e.getY() - ShapeStartY;
+            board.relocate(board.getLayoutX() + dx, board.getLayoutY() + dy);
+        }
     }
 
 
     @FXML
-    void endDrawRec(MouseEvent e) {
+    void endDrawRec(MouseEvent e) { 
         if (usage == "select"){
             selectviewer.setVisible(false);
             //selectviewer.setDisable(true);
@@ -888,32 +907,13 @@ public class MainSceneController {
 
     @FXML
     void handleMoveButton(ActionEvent event) {
-        if(moveButton.isSelected())
-            rectangle.setSelected(false);
-            circle.setSelected(false);
-            triangle.setSelected(false);
-            pen.setSelected(false); 
-            eraser.setSelected(false);
-            selection.setSelected(false);
-            line.setSelected(false);
-
-            eraserviewer.setVisible(false);
-            selectviewer.setVisible(false);
-
-            selectrectangle.setVisible(false);
-            board.setOnMousePressed(e -> {
-                startX = e.getX();
-                startY = e.getY();
-            });
-
-            board.setOnMouseDragged(e -> {
-                double offsetX = e.getX() - startX;
-                double offsetY = e.getY() - startY;
-                board.setTranslateX(board.getTranslateX() + offsetX);
-                board.setTranslateY(board.getTranslateY() + offsetY);
-                startX = e.getX();
-                startY = e.getY();
-            });
+        if (moveButton.isSelected()){
+            CancelSelectOption();
+            ToolManager("move");
+            updateStatuLabel();
+        }else{
+            usage = "None";
+        }
     }
 
     @FXML
@@ -991,7 +991,6 @@ public class MainSceneController {
                 colorselector.setLayoutY(p2Y- 15);
             }
             colorselector.show();
-	    
         }
 
         if (moveselected.isSelected()){
@@ -1071,8 +1070,6 @@ public class MainSceneController {
 	}
     }
 
-    
-
     void redraw(){
         gc.setFill(Color.WHITESMOKE);
         gc.fillRect(0, 0, board.getWidth(), board.getHeight());
@@ -1121,7 +1118,6 @@ public class MainSceneController {
         drawings = board.snapshot(null, null);
 
     }
-
 
     @FXML
     void PointSelectorEnter(MouseEvent e){
@@ -1326,15 +1322,15 @@ public class MainSceneController {
         
     }
 
- void resizetri(Circle p, MouseEvent e){
-    p.setCenterX(e.getX());
-    p.setCenterY(e.getY());
-    
-    X = e.getX();
-    Y = e.getY();
+    void resizetri(Circle p, MouseEvent e){
+        p.setCenterX(e.getX());
+        p.setCenterY(e.getY());
         
-    
- }
+        X = e.getX();
+        Y = e.getY();
+            
+        
+     }
 
     @FXML
     void BeginResize(){
@@ -1345,7 +1341,7 @@ public class MainSceneController {
             dessins.remove(lineshape);
         }else if (shape == "circle"){
             dessins.remove(circleshape);
-        }else if (shape == "tri"){
+        }else if(shape == "tri"){
             dessins.remove(trishape);
         }
         redraw();
@@ -1383,7 +1379,6 @@ public class MainSceneController {
             }else if(shape == "tri"){
                 dessins.add(trishape);
             }
-
 
             redraw();
             relocatedPoints();
@@ -1445,16 +1440,13 @@ public class MainSceneController {
                 trishape.setFill(colorselector.getValue());
                 selecttriangle.setVisible(false);
         
-            
-            }
+        }
         fillselected.setSelected(false);
         redraw();
     }
         drawings = board.snapshot(null, null);
         
     }
-
-    
 
     @FXML
     void StartMoveSelector(MouseEvent e){
