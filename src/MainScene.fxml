@@ -23,11 +23,11 @@
 
 <AnchorPane fx:id="window" maxHeight="-1.0" maxWidth="-1.0" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="MainSceneController">
    <children>
-      <Canvas fx:id="board" height="659.0" layoutY="60.0" onMouseDragged="#Draw" onMouseMoved="#Toolview" onMousePressed="#StartDraw" onMouseReleased="#endDrawRec" width="1280.0" />
-      <Circle id="p1" fx:id="p1" fill="WHITE" layoutY="60.0" onMouseDragged="#SizeSelector" onMouseEntered="#PointSelectorEnter" onMouseExited="#PointSelectorExit" onMousePressed="#BeginResize" onMouseReleased="#SizeSelected" radius="7.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" />
-      <Circle fx:id="p2" fill="WHITE" layoutY="60.0" onMouseDragged="#SizeSelector" onMouseEntered="#PointSelectorEnter" onMouseExited="#PointSelectorExit" onMousePressed="#BeginResize" onMouseReleased="#SizeSelected" radius="7.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" visible="false" />
-      <Circle fx:id="p3" fill="WHITE" layoutY="60.0" onMouseDragged="#SizeSelector" onMouseEntered="#PointSelectorEnter" onMouseExited="#PointSelectorExit" onMousePressed="#BeginResize" onMouseReleased="#SizeSelected" radius="7.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" visible="false" />
-      <Circle fx:id="p4" fill="WHITE" layoutY="60.0" onMouseDragged="#SizeSelector" onMouseEntered="#PointSelectorEnter" onMouseExited="#PointSelectorExit" onMousePressed="#BeginResize" onMouseReleased="#SizeSelected" radius="7.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" visible="false" />
+      <Canvas fx:id="board" height="660.0" onMouseClicked="#CancelSelectOption" onMouseDragged="#Draw" onMouseMoved="#Toolview" onMousePressed="#StartDraw" onMouseReleased="#endDrawRec" width="1280.0" />
+      <Circle id="p1" fx:id="p1" fill="WHITE" onMouseDragged="#SizeSelector" onMouseEntered="#PointSelectorEnter" onMouseExited="#PointSelectorExit" onMousePressed="#BeginResize" onMouseReleased="#SizeSelected" radius="7.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" visible="false" />
+      <Circle fx:id="p2" fill="WHITE" onMouseDragged="#SizeSelector" onMouseEntered="#PointSelectorEnter" onMouseExited="#PointSelectorExit" onMousePressed="#BeginResize" onMouseReleased="#SizeSelected" radius="7.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" visible="false" />
+      <Circle fx:id="p3" fill="WHITE" onMouseDragged="#SizeSelector" onMouseEntered="#PointSelectorEnter" onMouseExited="#PointSelectorExit" onMousePressed="#BeginResize" onMouseReleased="#SizeSelected" radius="7.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" visible="false" />
+      <Circle fx:id="p4" fill="WHITE" onMouseDragged="#SizeSelector" onMouseEntered="#PointSelectorEnter" onMouseExited="#PointSelectorExit" onMousePressed="#BeginResize" onMouseReleased="#SizeSelected" radius="7.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" visible="false" />
       <HBox fx:id="MenusTools" prefHeight="60.0" prefWidth="1280.0" style="-fx-background-color: #C0C0C0;">
          <children>
             <HBox alignment="CENTER_LEFT" prefHeight="47.0" prefWidth="327.0">
@@ -95,7 +95,7 @@
                         <Insets left="5.0" right="5.0" />
                      </HBox.margin>
                   </Separator>
-                  <ColorPicker fx:id="colorchoice" prefHeight="26.0" prefWidth="41.0" style="-fx-background-color: #C0C0C0; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0, 0, 1);">
+                  <ColorPicker fx:id="colorchoice" onMouseClicked="#CancelSelectOption" prefHeight="26.0" prefWidth="41.0" style="-fx-background-color: #C0C0C0; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0, 0, 1);">
                      <value>
                         <Color />
                      </value>
@@ -103,7 +103,7 @@
                         <Insets left="5.0" right="5.0" />
                      </HBox.margin>
                   </ColorPicker>
-                  <Slider fx:id="size" max="50.0" min="1.0" onMouseDragged="#Changesize" prefHeight="14.0" prefWidth="100.0" style="-fx-background-color: #C0C0C0;" value="10">
+                  <Slider fx:id="size" max="50.0" min="1.0" onMouseDragged="#Changesize" onMousePressed="#CancelSelectOption" prefHeight="14.0" prefWidth="100.0" style="-fx-background-color: #C0C0C0;" value="10">
                      <HBox.margin>
                         <Insets left="5.0" right="5.0" />
                      </HBox.margin>
@@ -155,6 +155,9 @@
                            </image>
                         </ImageView>
                      </graphic>
+                      <HBox.margin>
+                        <Insets right="5.0" />
+                     </HBox.margin>
                   </MenuButton>
                   <Separator orientation="VERTICAL" prefWidth="20.0" />
                   <ToggleButton fx:id="selection" layoutX="119.0" layoutY="16.0" mnemonicParsing="false" onAction="#SelectButton" prefHeight="47.0" prefWidth="47.0" style="-fx-background-color: #C0C0C0;" styleClass="pen">
@@ -165,7 +168,11 @@
                            </image>
                         </ImageView>
                      </graphic>
+                     <HBox.margin>
+                        <Insets left="5.0" />
+                     </HBox.margin>
                   </ToggleButton>
+                  <Separator orientation="VERTICAL" prefWidth="20.0" />
                   <Button fx:id="clearBut" mnemonicParsing="false" onAction="#ClearButton" prefHeight="33.0" prefWidth="40.0" style="-fx-background-color: #C0C0C0;" styleClass="pen">
                      <graphic>
                         <ImageView fitHeight="37.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
@@ -200,7 +207,7 @@
                   <Insets left="5.0" right="5.0" />
                </HBox.margin>
             </Separator>
-            <Label text="100 %" />
+             <Label fx:id="ZoomLabel" text="100 %" />
             <Separator orientation="VERTICAL" prefHeight="200.0">
                <HBox.margin>
                   <Insets left="5.0" right="5.0" />
@@ -216,13 +223,13 @@
                </graphic></Button>
          </children>
       </HBox>
-      <Rectangle fx:id="selectrectangle" arcHeight="5.0" arcWidth="5.0" fill="#0f83ea00" height="217.0" layoutY="60.0" onMouseDragged="#MoveSelector" onMousePressed="#StartMoveSelector" onMouseReleased="#EndMoveSelector" stroke="WHITE" strokeType="OUTSIDE" strokeWidth="5.0" visible="false" width="244.0">
+      <Rectangle fx:id="selectrectangle" arcHeight="5.0" arcWidth="5.0" fill="#0f83ea00" height="36.0" onMouseDragged="#MoveSelector" onMousePressed="#StartMoveSelector" onMouseReleased="#EndMoveSelector" stroke="WHITE" strokeWidth="5.0" visible="false" width="42.0">
          <cursor>
             <Cursor fx:constant="DEFAULT" />
          </cursor>
       </Rectangle>
-      <Ellipse fx:id="selectcircle" fill="#1f93ff00" layoutY="60.0" radiusX="100.0" radiusY="80.0" stroke="WHITE" strokeType="INSIDE" visible="false" />
-      <MenuButton fx:id="options" layoutY="60.0" mnemonicParsing="false" text="MenuButton" visible="false">
+      <Ellipse fx:id="selectcircle" fill="#1f93ff00" radiusX="100.0" radiusY="80.0" stroke="WHITE" strokeWidth="5.0" visible="false" />
+      <MenuButton fx:id="options" layoutY="60.0" mnemonicParsing="false" text="MenuOptions" visible="false">
         <items>
             <CheckMenuItem fx:id="sizeselected" mnemonicParsing="false" onAction="#SelectOptions" text="Redimensionner" />
             <CheckMenuItem fx:id="colorselected" mnemonicParsing="false" onAction="#SelectOptions" text="Couleur contours" />
@@ -232,14 +239,15 @@
         </items>
       </MenuButton>
       <ColorPicker fx:id="colorselector" layoutY="60.0" onAction="#ColorSelector" prefHeight="26.0" prefWidth="42.0" visible="false" />
-      <Rectangle fx:id="selectviewer" arcHeight="5.0" arcWidth="5.0" fill="#0f83ea00" height="50.0" layoutX="-25.0" layoutY="35.0" onMouseMoved="#Toolview" stroke="WHITE" strokeType="OUTSIDE" strokeWidth="5.0" visible="false" width="50.0">
+      <Rectangle fx:id="selectviewer" arcHeight="5.0" arcWidth="5.0" fill="#0f83ea00" height="50.0" onMouseMoved="#Toolview" stroke="WHITE" strokeType="OUTSIDE" strokeWidth="5.0" visible="false" width="50.0">
          <cursor>
             <Cursor fx:constant="DEFAULT" />
          </cursor>
       </Rectangle>
-      <Circle fx:id="eraserviewer" fill="#ffffff00" layoutX="0" layoutY="60.0" onMouseClicked="#Draw" onMouseDragged="#Draw" onMouseMoved="#Toolview" radius="30.0" stroke="WHITE" strokeType="INSIDE" strokeWidth="3.0" visible="false">
+      <Circle fx:id="eraserviewer" fill="#ffffff00" layoutX="0" onMouseClicked="#Draw" onMouseDragged="#Draw" onMouseMoved="#Toolview" radius="30.0" stroke="WHITE" strokeType="INSIDE" strokeWidth="5.0" visible="false">
          <cursor>
             <Cursor fx:constant="NONE" />
          </cursor></Circle>
+      <Label fx:id="statutLabel" layoutX="16.0" layoutY="687.0" prefHeight="18.0" prefWidth="200.0" text="..." />
    </children>
 </AnchorPane>

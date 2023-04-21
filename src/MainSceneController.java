@@ -1,15 +1,22 @@
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.security.spec.EllipticCurve;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
+import javax.xml.crypto.dsig.Transform;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollBar;
+import javafx.scene.transform.Translate;
+import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
@@ -28,17 +35,20 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.StrokeLineCap;
 import javafx.stage.FileChooser;
 
 
 public class MainSceneController {
 
     GraphicsContext gc;
-    private double radius;
 
     // default settings 
     private String usage = "None"; 
+    private String usageselected = "None";
+    private String shape = "None";
     private double erasersize = 15; 
     private double pensize = 10; 
     private double shapesize = 5;
@@ -50,6 +60,12 @@ public class MainSceneController {
 
     @FXML
     private URL location;
+
+    @FXML
+    private Label ZoomLabel;
+
+    @FXML
+    private Label statutLabel;
 
     private double zoomFactor = 1.0;
 
@@ -148,30 +164,53 @@ public class MainSceneController {
     @FXML
     private CheckMenuItem fillselected;
 
-    Circle circleshape = new Circle();
+    
     Rectangle rectshape = new Rectangle();
-    Rectangle rectobject = new Rectangle();
-    //Point2D point = new Point2D();
     Line lineshape = new Line();
+    Ellipse circleshape = new Ellipse();
+
+    Rectangle rectobject = new Rectangle();
+    Line lineobject = new Line();
+    Ellipse circleobject = new Ellipse();
+    //Point2D point = new Point2D();
+    
         
         
     private WritableImage drawings;
+    private double radiusEraser;
 
     // Variables pour la création de formes
     private double ShapeStartX, ShapeStartY;
 
-    private double rectX, rectY;
+    private double radiusX, radiusY; 
+    
+
+
+
     private double rectWidth, rectHeight;
     private double circleWidth, circleHeight;
     private double triangleWidth, triangleHeight;
 
-    // pour la séléction
-    double p1X, p1Y, p2X, p2Y;
+    private double rectX, rectY;
+    private double circleX, circleY;
+
+    private double p1X, p1Y, p2X, p2Y;
+    
+    private double lineX, lineY;
+    private double lineEndX, lineEndY;
 
 
     // pour la redimension
     @FXML
     Circle p1, p2, p3, p4;
+
+    // deplacement
+    private double startX = 0;
+    private double startY = 0;
+
+
+    double X;
+    double Y;
 
     private List<Circle> pointsforsize = new ArrayList<>();
     private List<Object> allTOOLS = new ArrayList<>();
@@ -214,18 +253,13 @@ public class MainSceneController {
                 eraserviewer.setCenterY(e.getY());
             }  
         }
-        if (selection.isSelected()){
-            selectviewer.setX(e.getX());
-            selectviewer.setY(e.getY());
-        }
     }
     
     void ToolManager(String tool){
         usage = tool;
-        
 
         if (tool == "pen"){
-
+    
             eraser.setSelected(false); 
             rectangle.setSelected(false);
             circle.setSelected(false);
@@ -249,6 +283,7 @@ public class MainSceneController {
 
             eraserviewer.setVisible(true);
             selectviewer.setVisible(false);
+
             selectrectangle.setVisible(false);
 
         }
@@ -263,6 +298,7 @@ public class MainSceneController {
         
             eraserviewer.setVisible(false);
             selectviewer.setVisible(false);
+
             selectrectangle.setVisible(false);
 
         }
@@ -277,6 +313,7 @@ public class MainSceneController {
             
             eraserviewer.setVisible(false);
             selectviewer.setVisible(false);
+
             selectrectangle.setVisible(false);
 
         }
@@ -291,6 +328,7 @@ public class MainSceneController {
                
             eraserviewer.setVisible(false);
             selectviewer.setVisible(false);
+
             selectrectangle.setVisible(false);
             
         }
@@ -305,6 +343,7 @@ public class MainSceneController {
                
             eraserviewer.setVisible(false);
             selectviewer.setVisible(false);
+
             selectrectangle.setVisible(false);
         }    
         if (tool == "select"){
@@ -318,6 +357,7 @@ public class MainSceneController {
             
             eraserviewer.setVisible(false);
             selectviewer.setVisible(false);
+
             selectrectangle.setVisible(false);
         }  
     }
@@ -329,7 +369,9 @@ public class MainSceneController {
     void PenButton(ActionEvent event) {
         size.setValue(pensize);
         if (pen.isSelected()){
+            CancelSelectOption();
             ToolManager("pen");
+            updateStatuLabel();
             //System.out.println("pen selected");
         }else{
             usage = "None";
@@ -341,7 +383,9 @@ public class MainSceneController {
     void EraserButton(ActionEvent event) {
         size.setValue(erasersize);
         if (eraser.isSelected()){
+            CancelSelectOption();
             ToolManager("eraser");
+            updateStatuLabel();
             //System.out.println("eraser selected");
         }else{
             eraserviewer.setVisible(false);
@@ -355,7 +399,9 @@ public class MainSceneController {
         size.setValue(shapesize);
         if (rectangle.isSelected()){
             //System.out.println("rectangle coche");
+            CancelSelectOption();
             ToolManager("rect");
+            updateStatuLabel();
         }else{
             usage = "None";
         } 
@@ -366,7 +412,9 @@ public class MainSceneController {
         size.setValue(shapesize);
         if (circle.isSelected()){
             //System.out.println("cercle coche");
+            CancelSelectOption();
             ToolManager("circle");
+            updateStatuLabel();
         }else{
             usage = "None";
         } 
@@ -377,7 +425,9 @@ public class MainSceneController {
         size.setValue(shapesize);
         if (triangle.isSelected()){
             //System.out.println("triangle coche");
+            CancelSelectOption();
             ToolManager("triangle");
+            updateStatuLabel();
         }else{
             usage = "None";
         }
@@ -389,7 +439,9 @@ public class MainSceneController {
         size.setValue(shapesize);
         if (line.isSelected()){
             //System.out.println("line coche");
+            CancelSelectOption();
             ToolManager("line");
+            updateStatuLabel();
         }else{
             usage = "None";
         } 
@@ -400,10 +452,9 @@ public class MainSceneController {
         if (selection.isSelected()){
             //System.out.println("select coche");
             ToolManager("select");
+            updateStatuLabel();
         }else{
-            for (Circle p : pointsforsize) {
-                p.setVisible(false);
-            }
+            CancelSelectOption();
             sizeselected.setSelected(false);
             selectrectangle.setVisible(false);
             usage = "None";
@@ -414,10 +465,15 @@ public class MainSceneController {
     @FXML
     void ClearButton(ActionEvent event) {
         dessins.clear();
+
+        CancelSelectOption();
+
         //add : remove all selections options and selectionviewer
         gc.setFill(Color.WHITESMOKE);
         gc.fillRect(0, 0, board.getWidth(), board.getHeight());
         drawings = board.snapshot(null, null);
+        //au cas où
+        usageselected = "None";
     }
 
     
@@ -427,7 +483,7 @@ public class MainSceneController {
 
     @FXML 
     void StartDraw(MouseEvent e){
-        if (usage == "pen" & pen.isSelected()) {
+        if (usage == "pen") {
             size.setValue(pensize);
             gc.setFill(colorchoice.getValue());
             if (e.getY() >= 0) {
@@ -437,11 +493,11 @@ public class MainSceneController {
             }
         }  
 
-        if (usage == "eraser" & eraser.isSelected()) {
+        if (usage == "eraser" ) {
             size.setValue(erasersize);
-            radius = eraserviewer.getRadius();
+            radiusEraser = eraserviewer.getRadius();
             Toolview(e);
-            gc.fillOval(e.getX()-radius, e.getY()-radius, radius * 2, radius * 2);  
+            gc.fillOval(e.getX()-radiusEraser, e.getY()-radiusEraser, radiusEraser * 2, radiusEraser * 2);  
         }
 
         if (usage == "line" | usage == "rect" | usage == "circle" | usage == "triangle"){
@@ -451,17 +507,54 @@ public class MainSceneController {
         }
 
         if (usage == "select"){
-            selectviewer.getStrokeDashArray().addAll(40d, 40d);
             ShapeStartX = e.getX();
             ShapeStartY = e.getY();
+            selectrectangle.setVisible(false);
+            
         }
 
     }
 
     @FXML
+    void CancelSelectOption(){
+        if (usage == "select"){
+            if (usageselected == "None"){
+                usage = "None";
+                selection.setSelected(false);
+                selectrectangle.setVisible(false);
+                selectcircle.setVisible(false);
+                /*for (Node option : options.getChildrenUnmodifiable()) {
+                    option.setVisible(false);
+                }*/
+                
+            }else{
+                if (usageselected == "size"){
+                    for (Circle p : pointsforsize) {
+                        p.setVisible(false);
+                    }
+                    sizeselected.setSelected(false);
+                    System.out.println("canceled");
+
+                }
+                if (usageselected == "color"){
+                    selectrectangle.setVisible(false);
+                    selectcircle.setVisible(false);
+                    colorselected.setSelected(false);
+                    fillselected.setSelected(false);
+                }
+                if (usageselected == "move"){
+                    selectrectangle.setVisible(false);
+                    selectcircle.setVisible(false);
+                    moveselected.setSelected(false);
+                }
+            }
+            // le menu des options doit se fermer
+        }
+    }
+
+    @FXML
     void Draw(MouseEvent e) {
         if (usage == "pen" & pen.isSelected()) {
-            drawings = board.snapshot(null, null);
             if (e.getY() >= 0) {
                 gc.fillOval(e.getX() - pensize/2, e.getY()- pensize/2, pensize, pensize);
             } else {
@@ -470,11 +563,10 @@ public class MainSceneController {
         }  
 
         if (usage == "eraser" & eraser.isSelected()) {
-            drawings = board.snapshot(null, null);
-            radius = eraserviewer.getRadius();
+            radiusEraser = eraserviewer.getRadius();
             Toolview(e);
             gc.setFill(Color.WHITESMOKE);
-            gc.fillOval(e.getX()-radius, e.getY()-radius, radius * 2, radius * 2);  
+            gc.fillOval(e.getX()-radiusEraser, e.getY()-radiusEraser, radiusEraser * 2, radiusEraser * 2);  
             
         }
 
@@ -490,7 +582,6 @@ public class MainSceneController {
             gc.drawImage(drawings, 0, 0);
             gc.strokeRect(rectX, rectY, rectWidth, rectHeight);
             
-            
 		}
   
         if (usage == "circle" & circle.isSelected()) {
@@ -500,10 +591,13 @@ public class MainSceneController {
             gc.setLineWidth(shapesize);
             circleWidth = Math.abs(e.getX() - ShapeStartX);
             circleHeight = Math.abs(e.getY() - ShapeStartY);
-            double circleX = Math.min(e.getX(), ShapeStartX);
-            double circleY = Math.min(e.getY(), ShapeStartY);
+            circleX = Math.min(e.getX(), ShapeStartX);
+            circleY = Math.min(e.getY(), ShapeStartY);
+
             gc.drawImage(drawings, 0, 0);
+                        //upper bound left  ///diameters 
             gc.strokeOval(circleX, circleY, circleWidth, circleHeight);
+            
         }    
 
         if (usage == "triangle" && triangle.isSelected()) {
@@ -534,19 +628,35 @@ public class MainSceneController {
             gc.setStroke(colorchoice.getValue());
             gc.setLineWidth(shapesize);
             gc.drawImage(drawings, 0, 0);
-            gc.strokeLine(ShapeStartX,ShapeStartY,e.getX(),e.getY());
-            //lines.add()
-            }
+
+            //lineX = Math.min(e.getX(), ShapeStartX);
+            //lineY = Math.min(e.getY(), ShapeStartY);
+
+
+            lineX = e.getX();
+            lineY = e.getY();
+            
+
+            gc.strokeLine(ShapeStartX, ShapeStartY, lineX, lineY);
+        }
 
         if (usage == "select" & selection.isSelected()) {
-            board.setCursor(Cursor.NONE);
             selectviewer.setVisible(true);
 
             //gère le cas où on utilisait la redimension juste avant
             for (Circle p : pointsforsize) {
                 p.setVisible(false);
             }
+
+
             sizeselected.setSelected(false);
+            moveselected.setSelected(false);
+            fillselected.setSelected(false);
+            colorselected.setSelected(false);
+
+
+            selectviewer.setX(ShapeStartX);
+            selectviewer.setY(ShapeStartY);
 
             selectviewer.setWidth(e.getX()-selectviewer.getX());
             selectviewer.setHeight(e.getY()-selectviewer.getY());
@@ -558,14 +668,20 @@ public class MainSceneController {
     void endDrawRec(MouseEvent e) {
         if (usage == "select"){
             selectviewer.setVisible(false);
+            //selectviewer.setDisable(true);
             board.setCursor(Cursor.DEFAULT);
             ShapeSelector();
         }else{
             if (usage == "line"){
-                Line line = new Line(ShapeStartX,ShapeStartY,e.getX(),e.getY());
+                //lineX = Math.min(lineX, ShapeStartX);
+                //lineY = Math.min(lineY, ShapeStartY);
+                //lineEndX = Math.max(lineX, ShapeStartX);
+                //lineEndY = Math.max(lineY, ShapeStartY);
+                Line line = new Line(ShapeStartX, ShapeStartY, lineX, lineY);
                 line.setStrokeWidth(shapesize);
                 line.setStroke(colorchoice.getValue());
                 dessins.add(line);
+                redraw();
             }
             if (usage == "rect"){
                 Rectangle rect = new Rectangle(rectX, rectY, rectWidth, rectHeight);
@@ -573,48 +689,59 @@ public class MainSceneController {
                 rect.setStroke(colorchoice.getValue());
                 rect.setFill(Color.TRANSPARENT);
                 dessins.add(rect);
+                redraw();
         
             }
             if (usage == "circle"){
-        
+                Ellipse circle = new Ellipse(circleX+circleWidth/2, circleY+circleHeight/2, circleWidth/2, circleHeight/2);
+                circle.setStroke(colorchoice.getValue());
+                circle.setStrokeWidth(shapesize);
+                circle.setFill(Color.TRANSPARENT);
+                dessins.add(circle);
+                redraw();
             }
             if (usage == "triangle"){
-                
+                redraw();
             }
-            drawings = board.snapshot(null, null);
-		    Draw(e);
+            
             System.out.println(dessins);
             
+            
         } 
+         //pour l'instant pen n'est pas enregistré
 	}
 
     void ShapeSelector(){
-        String shape = "None";
         for (int i = dessins.size()-1; i > -1; i--){      
             Object objet = dessins.get(i);
 
             if (objet instanceof Rectangle) {
                 rectshape = (Rectangle) objet;
                 shape = "rect";
-                p1X = rectshape.getX() - rectshape.getStrokeWidth()/2 + 3;
-                p2X = rectshape.getX() + rectshape.getWidth() + rectshape.getStrokeWidth()/2 - 3;
-                p1Y = rectshape.getY() - rectshape.getStrokeWidth()/2 + 3;
-                p2Y = rectshape.getY() + rectshape.getHeight() + rectshape.getStrokeWidth()/2 - 3;
+                p1X = rectshape.getX() - rectshape.getStrokeWidth()/2;
+                p1Y = rectshape.getY() - rectshape.getStrokeWidth()/2;
 
-            }else if (objet instanceof Circle) {
+                p2X = rectshape.getX() + rectshape.getWidth() + rectshape.getStrokeWidth()/2;
+                p2Y = rectshape.getY() + rectshape.getHeight() + rectshape.getStrokeWidth()/2;
+
+            }else if (objet instanceof Ellipse) {
                 shape = "circle";
-                circleshape = (Circle) objet;
+                circleshape = (Ellipse) objet;
                 p1X = circleshape.getCenterX();
                 p1Y = circleshape.getCenterY();
-                radius = circleshape.getRadius();
+                
+                radiusX = circleshape.getRadiusX() + circleshape.getStrokeWidth()/2;
+                radiusY = circleshape.getRadiusY() + circleshape.getStrokeWidth()/2;
+
                 
             }else if (objet instanceof Line) {
                 shape = "line";
                 lineshape = (Line) objet;
-                p1X = lineshape.getStartX();
-                p1Y = lineshape.getStartY();
-                p2X = lineshape.getEndX();
-                p2Y = lineshape.getEndY();
+                p1X = lineshape.getStartX() - lineshape.getStrokeWidth()/2;
+                p1Y = lineshape.getStartY() - lineshape.getStrokeWidth()/2;
+
+                p2X = lineshape.getEndX() + lineshape.getStrokeWidth()/2;
+                p2Y = lineshape.getEndY() + lineshape.getStrokeWidth()/2;
                 
             }else if (objet instanceof Point2D) {
                 shape = "point";
@@ -630,63 +757,154 @@ public class MainSceneController {
                 System.out.println("no shapes drew");
             }
 
-            if ((selectviewer.contains(p1X, p1Y) & selectviewer.contains(p2X, p2Y))){
-                ShapeViewer(shape);
-                options.setLayoutX(p2X + 15);
-                options.setLayoutY(p2Y - 15);
-                options.show();
-                //System.out.println("selected succeed");
-                
-                break;
-                
-            }else{
-                System.out.println("no shapes in the area");
+            if (shape == "rect" | shape == "line"){
+                if ((selectviewer.contains(p1X, p1Y) & selectviewer.contains(p2X, p2Y))){
+                    ShapeViewer();
+                    options.setLayoutX(p2X + 15);
+                    options.setLayoutY(p2Y - 115);
+                    options.show();
+                    
+                    
+                    break;
+                    
+                }
+            }
+            
+            if (shape == "circle"){
+                if ((selectviewer.contains(p1X - radiusX, p1Y - radiusY) & selectviewer.contains(p1X + radiusX, p1Y + radiusY))){
+                //if (selectviewer.contains(p1X, p1Y)){    
+                    ShapeViewer();
+                    options.setLayoutX(p1X + radiusX + 15);
+                    options.setLayoutY(p1Y - 115);
+                    options.show();
+                    System.out.println("selected succeed");
+                    break;
+                }
             }
         }
+
+    
     }
 
-    void ShapeViewer(String s){
-        if (s == "rect"){
+
+    void ShapeViewer(){
+        if (shape == "rect"){
             selectrectangle.setX(p1X);
             selectrectangle.setY(p1Y);
             selectrectangle.setWidth(p2X-p1X);
             selectrectangle.setHeight(p2Y-p1Y);
-            selectrectangle.getStrokeDashArray().addAll(5d, 40d);
+            selectrectangle.getStrokeDashArray().addAll(20d, 40d);
             selectrectangle.setVisible(true);
-        }else if (s == "circle"){
-            selectcircle.setCenterX(10);
-        }else if (s == ""){
+        }else if (shape == "circle"){
+            selectcircle.setCenterX(p1X);
+            selectcircle.setCenterY(p1Y);
+            selectcircle.setRadiusX(radiusX);
+            selectcircle.setRadiusY(radiusY);
+            selectcircle.getStrokeDashArray().addAll(5d, 40d);
+            selectcircle.setVisible(true);
+        }else if (shape == "line"){
+            //selectline.getPoints().removeAll(selectline.getPoints());
+            //System.out.println("points removed");
+            //selectline.getPoints().addAll(new Double[]{p1X,p1Y, 
+                                                        //p1X+}); 
+            selectrectangle.setX(p1X);
+            selectrectangle.setY(p1Y);
+            selectrectangle.setWidth(p2X-p1X);
+            selectrectangle.setHeight(p2Y-p1Y);
+            selectrectangle.getStrokeDashArray().addAll(20d, 40d);
+            selectrectangle.setVisible(true);                 
             
+        }else{
+
         }
 
+    }
+
+    Double[] CorrectLineViewer(){
+        Double[] points;
+        Double width = lineshape.getStrokeWidth();
+        //if (p1X < p2X){
+            points = new Double[]{p1X - width, p1Y + width,
+                p2X + width, p2Y + width,
+                 
+                p2X + width, p2Y - width,
+                p1X - width, p1Y - width};
+            
+        //}else if{
+
+        //}
+        return points;
     }
 
     @FXML
     void SelectOptions(ActionEvent e){
         if (eraseselected.isSelected()){
             //System.out.println("shape selected erased");
-            dessins.remove(rectshape);
+            if (shape == "rect"){
+                dessins.remove(rectshape);
+                selectrectangle.setVisible(false);
+            }else if (shape == "line"){
+                dessins.remove(lineshape);
+                selectrectangle.setVisible(false);
+            }else if (shape == "circle"){
+                dessins.remove(circleshape);
+                selectcircle.setVisible(false);
+            }
             redraw();
 
             eraseselected.setSelected(false);
-            selectrectangle.setVisible(false);
         }
 
         if (sizeselected.isSelected()){
-            sizeviewerwithpoints(rectshape);
+            usageselected = "size";
+
+            if (shape == "rect"){
+                selectrectangle.setVisible(false);
+    
+                p1.setVisible(true);
+                p2.setVisible(true);
+                p3.setVisible(true);
+                p4.setVisible(true);
+    
+            }else if (shape == "line"){
+                selectrectangle.setVisible(false);
+    
+                p1.setVisible(true);
+                p2.setVisible(true);
+                
+                
+            }else if (shape == "circle"){
+                selectcircle.setVisible(false);
+
+                p1.setVisible(true);
+                p2.setVisible(true);
+                p3.setVisible(true);
+                p4.setVisible(true);
+
+            }
+            relocatedPoints();
             
-            selectrectangle.setVisible(false);
+            
         
         }
 
         if (colorselected.isSelected() | fillselected.isSelected()){
-            colorselector.setLayoutX(rectshape.getX() + rectshape.getWidth() + 15);
-            colorselector.setLayoutY(rectshape.getY() + rectshape.getHeight() - 15);
+            usageselected = "color";
+            if (shape == "rect"){
+                colorselector.setLayoutX(rectshape.getX() + rectshape.getWidth() + 15);
+                colorselector.setLayoutY(rectshape.getY() + rectshape.getHeight() - 15);
+            }else if (shape == "line"){
+                colorselector.setLayoutX(lineshape.getEndX() + lineshape.getStrokeWidth() + 15);
+                colorselector.setLayoutY(lineshape.getEndY() + lineshape.getStrokeWidth() - 15);
+            }else if (shape == "circle"){
+                colorselector.setLayoutX(circleshape.getCenterX() + circleshape.getRadiusX() + 15);
+                colorselector.setLayoutY(circleshape.getCenterY() + circleshape.getRadiusY() - 15);
+            }
             colorselector.show();
-            selectrectangle.setVisible(false);
         }
 
         if (moveselected.isSelected()){
+            usageselected = "move";
             selectrectangle.setVisible(true);
         }
         /*if (duplicate.isSelected()){
@@ -697,56 +915,49 @@ public class MainSceneController {
            
     }
 
-    void sizeviewerwithpoints(Object object){
-
-        if (object instanceof Rectangle){
-
-            p1.setVisible(true);
-            p2.setVisible(true);
-            p3.setVisible(true);
-            
-            p4.setVisible(true);
-            //p5.setVisible(true);
-
-            //p6.setVisible(true);
-            //p7.setVisible(true);
-            //p8.setVisible(true);
-
-            relocatedPoints();
-
-        }
-        
-    }
-
     void relocatedPoints(){
-        //par niveau du rectangle (haut, centre, bas)
+        if (shape == "rect"){
 
-        //haut
-        p1.setCenterX(rectshape.getX());
-        p1.setCenterY(rectshape.getY());
+            //haut gauche
+            p1.setCenterX(rectshape.getX() - rectshape.getStrokeWidth()/2);
+            p1.setCenterY(rectshape.getY() - rectshape.getStrokeWidth()/2);
 
-        //p2.setCenterX(rectshape.getX()+rectshape.getWidth()/2);
-        //p2.setCenterY(rectshape.getY());
+            //haut doit
+            p2.setCenterX(rectshape.getX() + rectshape.getWidth() + rectshape.getStrokeWidth()/2);
+            p2.setCenterY(rectshape.getY() - rectshape.getStrokeWidth()/2);
+    
+            //bas gauche
+            p3.setCenterX(rectshape.getX() - rectshape.getStrokeWidth()/2);
+            p3.setCenterY(rectshape.getY() + rectshape.getHeight() + rectshape.getStrokeWidth()/2);
 
-        p2.setCenterX(rectshape.getX()+rectshape.getWidth());
-        p2.setCenterY(rectshape.getY());
+            // bas droit
+            p4.setCenterX(rectshape.getX() + rectshape.getWidth() + rectshape.getStrokeWidth()/2);
+            p4.setCenterY(rectshape.getY() + rectshape.getHeight() + rectshape.getStrokeWidth()/2);
 
-        /*centre
-        p4.setCenterX(rectshape.getX());
-        p4.setCenterY(rectshape.getY() + rectshape.getHeight()/2);
+        }else if (shape == "line"){
+            p1.setCenterX(lineshape.getStartX());
+            p1.setCenterY(lineshape.getStartY());
 
-        p5.setCenterX(rectshape.getX()+rectshape.getWidth());
-        p5.setCenterY(rectshape.getY() + rectshape.getHeight()/2);*/
+            p2.setCenterX(lineshape.getEndX());
+            p2.setCenterY(lineshape.getEndY());
 
-        //bas
-        p3.setCenterX(rectshape.getX());
-        p3.setCenterY(rectshape.getY() + rectshape.getHeight());
+        }else if (shape == "circle"){
+            //haut
+            p1.setCenterX(circleshape.getCenterX());
+            p1.setCenterY(circleshape.getCenterY() - circleshape.getRadiusY() - circleshape.getStrokeWidth()/2);
 
-        //p7.setCenterX(rectshape.getX()+rectshape.getWidth()/2);
-        //p7.setCenterY(rectshape.getY() + rectshape.getHeight());
+            //bas
+            p2.setCenterX(circleshape.getCenterX());
+            p2.setCenterY(circleshape.getCenterY() + circleshape.getRadiusY() + circleshape.getStrokeWidth()/2);
 
-        p4.setCenterX(rectshape.getX()+rectshape.getWidth());
-        p4.setCenterY(rectshape.getY() + rectshape.getHeight());
+            //droit
+            p3.setCenterX(circleshape.getCenterX() + circleshape.getRadiusX() + circleshape.getStrokeWidth()/2);
+            p3.setCenterY(circleshape.getCenterY());
+
+            //gauche
+            p4.setCenterX(circleshape.getCenterX() - circleshape.getRadiusX() - circleshape.getStrokeWidth()/2);
+            p4.setCenterY(circleshape.getCenterY());
+        }
     }
 
     
@@ -764,6 +975,23 @@ public class MainSceneController {
                 gc.setFill(rectobject.getFill());
                 gc.fillRect(rectobject.getX()+rectobject.getStrokeWidth()/2, rectobject.getY()+rectobject.getStrokeWidth()/2, rectobject.getWidth()-rectobject.getStrokeWidth(), rectobject.getHeight()-rectobject.getStrokeWidth());
                 gc.strokeRect(rectobject.getX(), rectobject.getY(), rectobject.getWidth(), rectobject.getHeight());
+            }
+
+            if (objet instanceof Line) {
+                lineobject = (Line) objet;
+                gc.setLineWidth(lineobject.getStrokeWidth());
+                gc.setStroke(lineobject.getStroke());
+                gc.strokeLine(lineobject.getStartX(), lineobject.getStartY(), lineobject.getEndX(), lineobject.getEndY());
+            }
+
+            if (objet instanceof Ellipse) {
+                circleobject = (Ellipse) objet;
+                gc.setLineWidth(circleobject.getStrokeWidth());
+                gc.setStroke(circleobject.getStroke());
+                gc.setFill(circleobject.getFill());
+                gc.fillOval(circleobject.getCenterX() - circleobject.getRadiusX(), circleobject.getCenterY() - circleobject.getRadiusY(), circleobject.getRadiusX()*2, circleobject.getRadiusY()*2);
+                gc.strokeOval(circleobject.getCenterX() - circleobject.getRadiusX(), circleobject.getCenterY() - circleobject.getRadiusY(), circleobject.getRadiusX()*2, circleobject.getRadiusY()*2);
+
             }
         }
         drawings = board.snapshot(null, null);
@@ -791,96 +1019,210 @@ public class MainSceneController {
 
     @FXML 
     void SizeSelector(MouseEvent e){
-        double X = 0;
-        double Y = 0;
+        
         if (e.getSource() instanceof Circle){
+            // the point dragged
             Circle p = (Circle) e.getSource();
+
+            //removes all other points while dragging
             ShowPointsSelector(p, false);
-            rectX = rectshape.getX();
-            rectY = rectshape.getY();
-
-            if (p == p1){ //point haut gauche
-
-                X = e.getX();
-                Y = e.getY();
-
-                rectshape.setX(e.getX());
-                rectshape.setY(e.getY());
-
-                rectshape.setWidth(rectshape.getWidth() - e.getX() + rectX); 
-                rectshape.setHeight(rectshape.getHeight() - e.getY() + rectY); 
-
-                p.setCenterX(e.getX());
-                p.setCenterY(e.getY());
-
-                
-
-            }else if (p == p2){ //point haut droit
-
-                X = rectX;
-                Y = e.getY();
-
-                rectshape.setY(e.getY());
-
-                rectshape.setWidth(e.getX() - rectX); 
-                rectshape.setHeight(rectshape.getHeight() - e.getY() + rectY); 
-
-                p.setCenterX(e.getX());
-                p.setCenterY(e.getY());
-
-                
-            }else if (p == p3){ //point bas gauche
-
-                X = rectX;
-                Y = rectY;
-
-                rectshape.setX(e.getX());
-                
-
-                rectshape.setWidth(rectshape.getWidth() - e.getX() + rectX); 
-                rectshape.setHeight(e.getY() - rectY); 
-
-                p.setCenterX(e.getX());
-                p.setCenterY(e.getY());
-
-            }else if (p == p4){ //point bas droit
-
-                X = rectX;
-                Y = rectY;
             
-                rectshape.setWidth(e.getX() - rectX); 
-                rectshape.setHeight(e.getY() - rectY); 
+            if (shape == "rect"){
+                rectX = rectshape.getX();
+                rectY = rectshape.getY();
 
-                p.setCenterX(e.getX());
-                p.setCenterY(e.getY());
+                resizerect(p, e);
+                
+            }else if (shape == "line"){
+                lineX = lineshape.getStartX();
+                lineY = lineshape.getStartY();
+
+                resizeline(p, e);
+
+            }else if (shape == "circle"){ 
+                circleX = p.getCenterX();
+                circleY = p.getCenterY();
+
+                resizecircle(p, e);
             }
 
             gc.setFill(Color.WHITESMOKE);
             gc.fillRect(0, 0, board.getWidth(), board.getHeight());
 
             gc.drawImage(drawings, 0, 0);
-            gc.setFill(rectshape.getFill());
-            gc.setStroke(rectshape.getStroke());
-            gc.strokeRect(X, Y, rectshape.getWidth(), rectshape.getHeight());
-            gc.fillRect(X+rectshape.getStrokeWidth()/2, Y+rectshape.getStrokeWidth()/2, rectshape.getWidth()-rectshape.getStrokeWidth(), rectshape.getHeight()-rectshape.getStrokeWidth());
+            
+            
+            if (shape == "rect"){
 
-        }else{
+                gc.setFill(rectshape.getFill());
+                gc.setStroke(rectshape.getStroke());
+                gc.setLineWidth(rectshape.getStrokeWidth());
+                gc.strokeRect(X, Y, rectshape.getWidth(), rectshape.getHeight());
+                gc.fillRect(X+rectshape.getStrokeWidth()/2, Y+rectshape.getStrokeWidth()/2, 
+                rectshape.getWidth()-rectshape.getStrokeWidth(), rectshape.getHeight()-rectshape.getStrokeWidth());
+            
+            }else if (shape == "line"){
+
+                gc.setStroke(lineshape.getStroke());
+                gc.setLineWidth(lineshape.getStrokeWidth());
+                gc.strokeLine(lineshape.getStartX(), lineshape.getStartY(), lineshape.getEndX(), lineshape.getEndY());
+           
+            }else if (shape == "circle"){
+
+                gc.setFill(circleshape.getFill());
+                gc.setStroke(circleshape.getStroke());
+                gc.setLineWidth(circleshape.getStrokeWidth());
+            
+                //décalage seulement sur l'affichage pendant la redimension
+                gc.strokeOval(circleshape.getCenterX() - circleobject.getRadiusX(), circleshape.getCenterY() - circleobject.getRadiusY(), circleshape.getRadiusX()*2, circleshape.getRadiusY()*2);
+                gc.fillOval(circleshape.getCenterX() - circleobject.getRadiusX(), circleshape.getCenterY() - circleobject.getRadiusY(), circleshape.getRadiusX()*2, circleshape.getRadiusY()*2);
+    
+            }
 
         }
+    }
+    
+    void resizerect(Circle p, MouseEvent e){
+        p.setCenterX(e.getX());
+        p.setCenterY(e.getY());
+        
+        if (p == p1){ //point haut gauche
+
+
+            X = e.getX() + rectshape.getStrokeWidth()/2;
+            Y = e.getY() + rectshape.getStrokeWidth()/2;
+
+            rectshape.setX(e.getX());
+            rectshape.setY(e.getY());
+
+            rectshape.setWidth(rectshape.getWidth() - e.getX() + rectX); 
+            rectshape.setHeight(rectshape.getHeight() - e.getY() + rectY );      
+
+        }
+        if (p == p2){ //point haut droit
+
+            X = rectX - rectshape.getStrokeWidth()/2;
+            Y = e.getY() + rectshape.getStrokeWidth()/2;
+
+            rectshape.setY(e.getY());
+
+            rectshape.setWidth(e.getX() - rectX); 
+            rectshape.setHeight(rectshape.getHeight() - e.getY() + rectY);
+
+            
+        }
+        if (p == p3){ //point bas gauche
+
+            X = rectX + rectshape.getStrokeWidth()/2;
+            Y = rectY - rectshape.getStrokeWidth()/2;
+
+            rectshape.setX(e.getX());
+            
+
+            rectshape.setWidth(rectshape.getWidth() - e.getX() + rectX); 
+            rectshape.setHeight(e.getY() - rectY); 
+
+
+        }
+        if (p == p4){ //point bas droit
+
+            X = rectX - rectshape.getStrokeWidth()/2;
+            Y = rectY - rectshape.getStrokeWidth()/2;
+        
+            rectshape.setWidth(e.getX() - rectX); 
+            rectshape.setHeight(e.getY() - rectY); 
+
+        }
+    }
+
+    void resizeline(Circle p, MouseEvent e){
+        X = e.getX();
+        Y = e.getY();
+        p.setCenterX(e.getX());
+        p.setCenterY(e.getY());
+        //double pente = Math.abs((lineshape.getEndY() - lineshape.getStartY()))/(Math.abs(lineshape.getStartX() - lineshape.getEndX())); 
+        if (p == p1){ //point de départ
+            lineshape.setStartX(X);  
+            lineshape.setStartY(Y);    
+        }
+        if (p == p2){ //point de fin
+            lineshape.setEndX(X);  
+            lineshape.setEndY(Y);
+        }
+    }
+
+    void resizecircle(Circle p, MouseEvent e){
+
+        if (p == p1){ //point en haut
+            p.setCenterY(e.getY());
+            circleshape.setCenterY(circleshape.getCenterY() - circleY + e.getY());
+            circleshape.setRadiusY(circleshape.getRadiusY() + circleY - e.getY());
+        }
+        if (p == p2){ //point en bas
+            p.setCenterY(e.getY());
+            circleshape.setCenterY(circleshape.getCenterY() - circleY + e.getY());
+            circleshape.setRadiusY(circleshape.getRadiusY() - circleY + e.getY());
+        }
+        if (p == p3){ // point à droite
+             p.setCenterX(e.getX());
+             circleshape.setCenterX(circleshape.getCenterX() - circleX + e.getX());
+             circleshape.setRadiusX(circleshape.getRadiusX() - circleX + e.getX());
+        }
+        if (p == p4){ // point à gauche
+            p.setCenterX(e.getX());
+             circleshape.setCenterX(circleshape.getCenterX() - circleX + e.getX());
+             circleshape.setRadiusX(circleshape.getRadiusX() + circleX - e.getX());
+        }
+        
     }
 
     @FXML
     void BeginResize(){
         System.out.println("begin");
-        dessins.remove(rectshape);
+        if (shape == "rect"){
+            dessins.remove(rectshape);
+        }else if (shape == "line"){
+            dessins.remove(lineshape);
+        }else if (shape == "circle"){
+            dessins.remove(circleshape);
+        }
         redraw();
     }
 
     @FXML
     void SizeSelected(MouseEvent e){
+        
         if (e.getSource() instanceof Circle){
             Circle p = (Circle) e.getSource();
-            dessins.add(rectshape);
+            if (shape == "rect"){
+                // gère un décalage de la figure rectangulaire 
+                if (p == p1){
+                    rectshape.setX(rectshape.getX() + rectshape.getStrokeWidth()/2);
+                    rectshape.setY(rectshape.getY() + rectshape.getStrokeWidth()/2);
+                }
+                if (p == p2){
+                    rectshape.setX(rectshape.getX() - rectshape.getStrokeWidth()/2);
+                    rectshape.setY(rectshape.getY() + rectshape.getStrokeWidth()/2);
+                }
+                if (p == p3){
+                    rectshape.setX(rectshape.getX() + rectshape.getStrokeWidth()/2);
+                    rectshape.setY(rectshape.getY() - rectshape.getStrokeWidth()/2);
+                }
+                if (p == p4){
+                    rectshape.setX(rectshape.getX() - rectshape.getStrokeWidth()/2);
+                    rectshape.setY(rectshape.getY() - rectshape.getStrokeWidth()/2);
+                }
+                dessins.add(rectshape);
+            }else if(shape == "line"){
+                dessins.add(lineshape);
+            }else if(shape == "circle"){
+
+                dessins.add(circleshape);
+            }else if(shape == ""){
+                
+            }
+
+
             redraw();
             relocatedPoints();
             ShowPointsSelector(p, true);
@@ -906,66 +1248,98 @@ public class MainSceneController {
     void ColorSelector(){
 
         if (colorselected.isSelected()){
+            if (shape =="rect"){
+                rectshape.setStroke(colorselector.getValue());
+                selectrectangle.setVisible(false);
+            }else if (shape =="line"){
+                lineshape.setStroke(colorselector.getValue());
+                selectrectangle.setVisible(false);
+            }else if(shape == "circle"){
+                circleshape.setStroke(colorselector.getValue());
+                selectcircle.setVisible(false);
+            }
 
-        rectshape.setStroke(colorselector.getValue());
-        gc.setLineWidth(rectshape.getStrokeWidth());
-        gc.setStroke(colorselector.getValue());
-        gc.strokeRect(rectshape.getX(), rectshape.getY(), rectshape.getWidth(), rectshape.getHeight());
-        colorselected.setSelected(false);
-        redraw();
+            colorselected.setSelected(false);
+            redraw();
         }
-
 
         if (fillselected.isSelected()){
-
-        rectshape.setFill(colorselector.getValue());
-        gc.setFill(colorselector.getValue());
-        gc.fillRect(rectshape.getX()+rectshape.getStrokeWidth()/2, rectshape.getY()+rectshape.getStrokeWidth()/2, rectshape.getWidth()-rectshape.getStrokeWidth(), rectshape.getHeight()-rectshape.getStrokeWidth());
-        fillselected.setSelected(false);
-        redraw();
+            if (shape =="rect"){
+                rectshape.setFill(colorselector.getValue());
+                selectrectangle.setVisible(false);
+            }else if (shape =="line"){
+                lineshape.setStroke(colorselector.getValue());
+                selectrectangle.setVisible(false);
+            }else if (shape == "circle"){
+                circleshape.setFill(colorselector.getValue());
+                selectcircle.setVisible(false);
+            }
+        
+            fillselected.setSelected(false);
+            redraw();
 
         }
+        
         drawings = board.snapshot(null, null);
         
     }
 
+    
+
     @FXML
     void StartMoveSelector(MouseEvent e){
-        dessins.remove(rectshape);
+        if (shape == "rect"){
+            dessins.remove(rectshape);
+        }else if (shape == "line"){
+            dessins.remove(lineshape);
+        }else if (shape == "circle"){
+            dessins.remove(circleshape);
+        }
         redraw();
+        startX = e.getX();
+        startY = e.getY();
     }
 
     @FXML
     void MoveSelector(MouseEvent e){
         if (moveselected.isSelected()){
-            if (e.getSource() instanceof Rectangle){  //selectedrectangle
+            if (shape == "rect" | shape == "line"){  
                 Rectangle r = (Rectangle) e.getSource();
-                r.setX(2 * e.getX() - r.getX());
-                r.setY(2 * e.getY() - r.getY());
+                double offsetX = e.getX() - startX;
+                double offsetY = e.getY() - startY;
+                r.setX(r.getX() + offsetX);
+                r.setY(r.getY() + offsetY);
 
         
-                gc.setLineWidth(rectshape.getStrokeWidth());
-                gc.setStroke(rectshape.getStroke());
                 
-
                 
-        
-        /*System.out.print("X =");
-        System.out.print(X);
-        System.out.print(" \n Y =");
-        System.out.println(Y);
-        Width = rectshape.getWidth();
-        Height = rectshape.getHeight();*/
-        
-                
-
-                //gc.setFill(Color.WHITESMOKE);
-                //gc.fillRect(0, 0, board.getWidth(), board.getHeight());
+                gc.setFill(Color.WHITESMOKE);
+                gc.fillRect(0, 0, board.getWidth(), board.getHeight());
                 gc.drawImage(drawings, 0, 0);
-                gc.setFill(rectshape.getFill());
-                gc.fillRect(e.getX()+rectshape.getStrokeWidth()/2, e.getY()+rectshape.getStrokeWidth()/2, 
-                rectshape.getWidth()-rectshape.getStrokeWidth(), rectshape.getHeight()-rectshape.getStrokeWidth());
-                gc.strokeRect(2 * e.getX() - r.getX(), 2 * e.getY() - r.getY(), rectshape.getWidth(), rectshape.getHeight());
+                
+                if (shape == "rect"){
+                    gc.setLineWidth(rectshape.getStrokeWidth());
+                    gc.setStroke(rectshape.getStroke());
+                    gc.setFill(rectshape.getFill());
+                    gc.fillRect(r.getX()+rectshape.getStrokeWidth()/2, r.getY()+rectshape.getStrokeWidth()/2, 
+                    rectshape.getWidth()-rectshape.getStrokeWidth(), rectshape.getHeight()-rectshape.getStrokeWidth());
+                    gc.strokeRect(r.getX(), r.getY(), rectshape.getWidth(), rectshape.getHeight());
+                
+                }else if (shape == "line"){
+                    gc.setLineWidth(lineshape.getStrokeWidth());
+                    gc.setStroke(lineshape.getStroke());
+                    
+                    gc.strokeLine(r.getX(), r.getY(), r.getX()+r.getWidth(), r.getY()+r.getHeight());
+                }
+
+                startX = e.getX();
+                startY = e.getY();
+
+            }else if (shape == "circle"){
+                
+
+                startX = e.getX();
+                startY = e.getY();
             }
         }
     }
@@ -973,14 +1347,59 @@ public class MainSceneController {
     @FXML
     void EndMoveSelector(MouseEvent e){
         selectrectangle.setVisible(false);
-        moveselected.setSelected(false);
-        Rectangle rectmoved = new Rectangle(selectrectangle.getX(), selectrectangle.getY(), rectshape.getWidth(), rectshape.getHeight());
-        rectmoved.setStrokeWidth(rectshape.getStrokeWidth());
-        rectmoved.setStroke(rectshape.getStroke());
-        rectmoved.setFill(rectshape.getFill());
-        dessins.add(rectmoved);
+        
+        if (shape == "rect"){
+            Rectangle rectmoved = new Rectangle(selectrectangle.getX(), selectrectangle.getY(), rectshape.getWidth(), rectshape.getHeight());
+            rectmoved.setStrokeWidth(rectshape.getStrokeWidth());
+            rectmoved.setStroke(rectshape.getStroke());
+            rectmoved.setFill(rectshape.getFill());
+            dessins.add(rectmoved);
+        }else if (shape == "line"){
+            // léger décalage visible
+            Line linemoved = new Line(selectrectangle.getX(), selectrectangle.getY(), selectrectangle.getX()+selectrectangle.getWidth(), selectrectangle.getY()+selectrectangle.getHeight());
+            linemoved.setStrokeWidth(lineshape.getStrokeWidth());
+            linemoved.setStroke(lineshape.getStroke());
+            dessins.add(linemoved);
+        }else if (shape == "circle"){
+
+        }
+
+
+
         redraw();
+
+        moveselected.setSelected(false);
     }
+
+    @FXML
+    private void updateZoomValueLabel() {
+        ZoomLabel.setText(String.format("%.0f%%", (zoomFactor*100)));
+    }
+
+    private void updateStatuLabel() {
+        statutLabel.setText(usage);  
+          
+    }
+
+    @FXML
+    private void ZoomIn(){
+        zoomFactor *= 1.1;
+        board.setScaleX(zoomFactor);
+        board.setScaleY(zoomFactor);
+        updateZoomValueLabel();
+    }
+
+    @FXML
+    private void ZoomOut(){
+        if (zoomFactor*100 <= 100){
+            System.out.println("Impossible");
+        } else {
+            zoomFactor /= 1.1;
+            board.setScaleX(zoomFactor);
+            board.setScaleY(zoomFactor);
+            updateZoomValueLabel();
+        }
+    } 
     
 // SECTION FICHIER //
 
@@ -1018,27 +1437,20 @@ public class MainSceneController {
         }
     }
 
-    @FXML
-    private void ZoomIn(){
-        zoomFactor *= 1.1;
-        board.setScaleX(zoomFactor);
-        board.setScaleY(zoomFactor);
-    }
-
-    @FXML
-    private void ZoomOut(){
-        zoomFactor /= 1.1;
-        board.setScaleX(zoomFactor);
-        board.setScaleY(zoomFactor);
-    }
+    
 
     @FXML
     void initialize() {
         drawings = new WritableImage((int) board.getWidth(), (int) board.getHeight());
 
-        //allTOOLS.add();
+        selectviewer.getStrokeDashArray().addAll(40d, 40d);
+
+        allTOOLS.add(pen);allTOOLS.add(eraser);allTOOLS.add(rectangle);allTOOLS.add(circle);allTOOLS.add(triangle);
+        allTOOLS.add(line);allTOOLS.add(selection);allTOOLS.add(eraserviewer);allTOOLS.add(selectviewer);allTOOLS.add(selectrectangle);
+            
         pointsforsize.add(p1);pointsforsize.add(p2);pointsforsize.add(p3);
         pointsforsize.add(p4);
+
         gc = board.getGraphicsContext2D();
         gc.setFill(Color.WHITESMOKE);
         gc.fillRect(0, 0, board.getWidth(), board.getHeight());
