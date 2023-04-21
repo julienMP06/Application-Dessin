@@ -53,15 +53,10 @@ public class MainSceneController {
     private double erasersize = 15; 
     private double pensize = 10; 
     private double shapesize = 5;
-    
-    @FXML
-    private Label ZoomLabel;
+
 
     @FXML
     private ResourceBundle resources;
-
-    @FXML
-    private Label statutLabel;
 
     @FXML
     private URL location;
@@ -1241,9 +1236,12 @@ public class MainSceneController {
                 }
             }
         }else{
+            //changer pour les différentes formes modifiées par la redimension 
             for (Circle point : pointsforsize) {
                 point.setVisible(true); 
             }
+            
+
         }
     } 
 
