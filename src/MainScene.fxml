@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
+<?import java.lang.Double?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.canvas.Canvas?>
@@ -20,7 +20,7 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.shape.Ellipse?>
 <?import javafx.scene.shape.Rectangle?>
-
+<?import javafx.scene.shape.Polygon?>
 <AnchorPane fx:id="window" maxHeight="-1.0" maxWidth="-1.0" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="MainSceneController">
    <children>
       <Canvas fx:id="board" height="660.0" layoutY="60.0" onMouseClicked="#CancelSelectOption" onMouseDragged="#Draw" onMouseMoved="#Toolview" onMousePressed="#StartDraw" onMouseReleased="#endDrawRec" width="1280.0" />
@@ -228,6 +228,16 @@
          </cursor>
       </Rectangle>
       <Ellipse fx:id="selectcircle" fill="#1f93ff00" layoutY="60.0" onMouseDragged="#MoveSelector" onMousePressed="#StartMoveSelector" onMouseReleased="#EndMoveSelector" radiusX="100.0" radiusY="80.0" stroke="WHITE" strokeWidth="5.0" visible="false" />
+      <Polygon fx:id="selecttriangle" fill="#1f93ff00" layoutY="60.0" stroke="WHITE" strokeWidth="5.0" visible="false">
+        <points>
+          <Double fx:value="-50.0" />
+          <Double fx:value="40.0" />
+          <Double fx:value="50.0" />
+          <Double fx:value="40.0" />
+          <Double fx:value="0.0" />
+          <Double fx:value="-60.0" />
+        </points>
+      </Polygon>
       <MenuButton fx:id="options" layoutY="60.0" mnemonicParsing="false" text="MenuOptions" visible="false">
         <items>
             <CheckMenuItem fx:id="sizeselected" mnemonicParsing="false" onAction="#SelectOptions" text="Redimensionner" />
