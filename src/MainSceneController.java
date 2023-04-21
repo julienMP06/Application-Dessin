@@ -816,8 +816,7 @@ public class MainSceneController {
                 }
             }
         }
-
-    
+   
     }
 
 
@@ -1061,7 +1060,6 @@ public class MainSceneController {
                 gc.strokeOval(circleobject.getCenterX() - circleobject.getRadiusX(), circleobject.getCenterY() - circleobject.getRadiusY(), circleobject.getRadiusX()*2, circleobject.getRadiusY()*2);
 
             }
-        }
 	    if (objet instanceof Polygon) {
                 triobject = (Polygon) objet;
                 gc.setLineWidth(triobject.getStrokeWidth());
@@ -1075,7 +1073,7 @@ public class MainSceneController {
                 gc.strokePolygon(Xs, Ys, 3);
                 gc.fillPolygon(Xs, Ys, 3);
             }
-         }
+        }
         drawings = board.snapshot(null, null);
 
     }
@@ -1383,7 +1381,7 @@ public class MainSceneController {
             redraw();
 
         }
-        
+    }
         drawings = board.snapshot(null, null);
         
     }
