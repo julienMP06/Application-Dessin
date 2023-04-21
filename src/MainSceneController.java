@@ -7,9 +7,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
 import javax.xml.crypto.dsig.Transform;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollBar;
-import javafx.scene.transform.Translate;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
@@ -22,8 +19,10 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ColorPicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.control.Slider;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
@@ -39,6 +38,8 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.stage.FileChooser;
+import javafx.scene.transform.Translate;
+
 
 
 public class MainSceneController {
@@ -53,10 +54,14 @@ public class MainSceneController {
     private double pensize = 10; 
     private double shapesize = 5;
     
-    
+    @FXML
+    private Label ZoomLabel;
 
     @FXML
     private ResourceBundle resources;
+
+    @FXML
+    private Label statutLabel;
 
     @FXML
     private URL location;
@@ -340,11 +345,12 @@ public class MainSceneController {
             pen.setSelected(false); 
             eraser.setSelected(false);
             selection.setSelected(false);
-               
+
             eraserviewer.setVisible(false);
             selectviewer.setVisible(false);
 
             selectrectangle.setVisible(false);
+
         }    
         if (tool == "select"){
 
@@ -359,6 +365,7 @@ public class MainSceneController {
             selectviewer.setVisible(false);
 
             selectrectangle.setVisible(false);
+
         }  
     }
 
@@ -476,9 +483,6 @@ public class MainSceneController {
         usageselected = "None";
     }
 
-    
-
-
 // SECTION DESSINS //
 
     @FXML 
@@ -512,7 +516,6 @@ public class MainSceneController {
             selectrectangle.setVisible(false);
             
         }
-
     }
 
     @FXML
@@ -1343,6 +1346,7 @@ public class MainSceneController {
             }
         }
     }
+    
 
     @FXML
     void EndMoveSelector(MouseEvent e){
@@ -1402,7 +1406,6 @@ public class MainSceneController {
     } 
     
 // SECTION FICHIER //
-
     @FXML
     private void saveDrawing(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
