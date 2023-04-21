@@ -103,6 +103,9 @@ public class MainSceneController {
 
     @FXML
     private ToggleButton selection;
+
+    @FXML
+    private ToggleButton moveButton;
     
     @FXML
     private Slider size;
@@ -275,6 +278,7 @@ public class MainSceneController {
             triangle.setSelected(false);
             line.setSelected(false);
             selection.setSelected(false);
+            moveButton.setSelected(false);
 
             eraserviewer.setVisible(false);
             selectviewer.setVisible(false);
@@ -289,6 +293,7 @@ public class MainSceneController {
             triangle.setSelected(false);
             line.setSelected(false);
             selection.setSelected(false);
+            moveButton.setSelected(false);
 
             eraserviewer.setVisible(true);
             selectviewer.setVisible(false);
@@ -304,6 +309,8 @@ public class MainSceneController {
             eraser.setSelected(false);
             line.setSelected(false);
             selection.setSelected(false);
+            
+            moveButton.setSelected(false);
         
             eraserviewer.setVisible(false);
             selectviewer.setVisible(false);
@@ -320,6 +327,8 @@ public class MainSceneController {
             line.setSelected(false);
             selection.setSelected(false);
             
+            moveButton.setSelected(false);
+            
             eraserviewer.setVisible(false);
             selectviewer.setVisible(false);
 
@@ -334,6 +343,8 @@ public class MainSceneController {
             eraser.setSelected(false);
             line.setSelected(false);
             selection.setSelected(false);
+            
+            moveButton.setSelected(false);
                
             eraserviewer.setVisible(false);
             selectviewer.setVisible(false);
@@ -349,6 +360,8 @@ public class MainSceneController {
             pen.setSelected(false); 
             eraser.setSelected(false);
             selection.setSelected(false);
+            
+            moveButton.setSelected(false);
 
             eraserviewer.setVisible(false);
             selectviewer.setVisible(false);
@@ -364,6 +377,8 @@ public class MainSceneController {
             pen.setSelected(false); 
             eraser.setSelected(false);
             line.setSelected(false);
+            
+            moveButton.setSelected(false);
             
             eraserviewer.setVisible(false);
             selectviewer.setVisible(false);
@@ -870,7 +885,36 @@ public class MainSceneController {
     void CorrectLineViewer(){
         
     }
-	
+
+    @FXML
+    void handleMoveButton(ActionEvent event) {
+        if(moveButton.isSelected())
+            rectangle.setSelected(false);
+            circle.setSelected(false);
+            triangle.setSelected(false);
+            pen.setSelected(false); 
+            eraser.setSelected(false);
+            selection.setSelected(false);
+            line.setSelected(false);
+
+            eraserviewer.setVisible(false);
+            selectviewer.setVisible(false);
+
+            selectrectangle.setVisible(false);
+            board.setOnMousePressed(e -> {
+                startX = e.getX();
+                startY = e.getY();
+            });
+
+            board.setOnMouseDragged(e -> {
+                double offsetX = e.getX() - startX;
+                double offsetY = e.getY() - startY;
+                board.setTranslateX(board.getTranslateX() + offsetX);
+                board.setTranslateY(board.getTranslateY() + offsetY);
+                startX = e.getX();
+                startY = e.getY();
+            });
+    }
 
     @FXML
     void SelectOptions(ActionEvent e){
@@ -926,9 +970,8 @@ public class MainSceneController {
                 p1.setVisible(true);
                 p2.setVisible(true);
                 p3.setVisible(true);
+            }
             relocatedPoints();
-	    }
-            
         
         }
 
