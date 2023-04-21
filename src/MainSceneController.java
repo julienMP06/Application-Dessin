@@ -139,6 +139,9 @@ public class MainSceneController {
     
     @FXML
     private Ellipse selectcircle;
+	
+    @FXML
+    private Polygon selecttriangle;
 
 
 // options pour la séléction //
@@ -168,10 +171,12 @@ public class MainSceneController {
     Rectangle rectshape = new Rectangle();
     Line lineshape = new Line();
     Ellipse circleshape = new Ellipse();
+    Polygon trishape = new Polygon();
 
     Rectangle rectobject = new Rectangle();
     Line lineobject = new Line();
     Ellipse circleobject = new Ellipse();
+	Polygon triobject = new Polygon();
     //Point2D point = new Point2D();
     
         
@@ -193,6 +198,8 @@ public class MainSceneController {
 
     private double rectX, rectY;
     private double circleX, circleY;
+	private double triangleX, triangleY;
+	private boolean Senscorrectetriangle;
 
     private double p1X, p1Y, p2X, p2Y;
     
@@ -201,16 +208,18 @@ public class MainSceneController {
 
 
     // pour la redimension
-    @FXML
-    Circle p1, p2, p3, p4;
+   @FXML
+   private Circle p1, p2, p3, p4;
+
+    private double w = 0;
 
     // deplacement
     private double startX = 0;
     private double startY = 0;
 
 
-    double X;
-    double Y;
+    private double X;
+    private double Y;
 
     private List<Circle> pointsforsize = new ArrayList<>();
     private List<Object> allTOOLS = new ArrayList<>();
@@ -521,6 +530,7 @@ public class MainSceneController {
                 selection.setSelected(false);
                 selectrectangle.setVisible(false);
                 selectcircle.setVisible(false);
+		    selecttriangle.setVisible(false);
                 /*for (Node option : options.getChildrenUnmodifiable()) {
                     option.setVisible(false);
                 }*/
@@ -537,11 +547,14 @@ public class MainSceneController {
                 if (usageselected == "color"){
                     selectrectangle.setVisible(false);
                     selectcircle.setVisible(false);
+			selecttriangle.setVisible(false);
                     colorselected.setSelected(false);
                     fillselected.setSelected(false);
                 }
                 if (usageselected == "move"){
                     selectrectangle.setVisible(false);
+			selectcircle.setVisible(false);
+                    selecttriangle.setVisible(false);
                     selectcircle.setVisible(false);
                     moveselected.setSelected(false);
                 }
@@ -605,15 +618,17 @@ public class MainSceneController {
             gc.setLineWidth(shapesize);
             triangleWidth = Math.abs(e.getX() - ShapeStartX);
             triangleHeight = Math.abs(e.getY() - ShapeStartY);
-            double triangleX = Math.min(e.getX(), ShapeStartX);
-            double triangleY = Math.min(e.getY(), ShapeStartY);
+            triangleX = Math.min(e.getX(), ShapeStartX);
+            triangleY = Math.min(e.getY(), ShapeStartY);
             gc.drawImage(drawings, 0, 0);
             // Dans le cas ou on dessine un triangle vers le haut il faut changer l'ordre des points pour piouvoir avoir un triangle dans le bon sens
             if (e.getY() < ShapeStartY) {
+		    Senscorrectetriangle = true;
                 gc.strokePolygon(new double[]{triangleX, triangleX + triangleWidth, triangleX + triangleWidth/2},
                                  new double[]{triangleY, triangleY, triangleY + triangleHeight}, 
                                  3);
             } else {
+		    Senscorrectetriangle = false;
                 gc.strokePolygon(new double[]{triangleX, triangleX + triangleWidth, triangleX + triangleWidth/2},
                                  new double[]{triangleY + triangleHeight, triangleY + triangleHeight, triangleY}, 
                                  3);
@@ -699,6 +714,21 @@ public class MainSceneController {
                 redraw();
             }
             if (usage == "triangle"){
+		    Polygon tri;
+                if (Senscorrectetriangle == true) {
+                    tri = new Polygon(triangleX, triangleY,
+                                                            triangleX + triangleWidth, triangleY,
+                                                            triangleX + triangleWidth/2, triangleY + triangleHeight);
+                }else{
+                    tri = new Polygon(triangleX, triangleY + triangleHeight, 
+                    triangleX + triangleWidth, triangleY + triangleHeight,
+                    triangleX + triangleWidth/2, triangleY);
+                }
+
+                tri.setStroke(colorchoice.getValue());
+                tri.setStrokeWidth(shapesize);
+                tri.setFill(Color.TRANSPARENT);
+                dessins.add(tri);  
                 redraw();
             }
             
@@ -746,16 +776,22 @@ public class MainSceneController {
                 Point2D point = (Point2D) objet;
                 
 
-            } /*else if (objet instanceof Triangle) {
-                Triangle triangle = (Triangle) objet;
-                double centerX = (triangle.getPoint1().getX() + triangle.getPoint2().getX() + triangle.getPoint3().getX()) / 3;
-                double centerY = (triangle.getPoint1().getY() + triangle.getPoint2().getY() + triangle.getPoint3().getY()) / 3;
-                // Utiliser les coordonnées du centre du triangle*/
-            else{
+            } else if (objet instanceof Polygon) {
+                shape = "tri";
+                trishape = (Polygon) objet;
+
+                ObservableList<Double> points = triobject.getPoints();
+                p1X = Math.min(Math.min(points.get(0),points.get(2)), points.get(4)) - trishape.getStrokeWidth()/2;
+                p1Y = Math.min(Math.min(points.get(1), points.get(3)), points.get(5)) - trishape.getStrokeWidth()/2;
+                
+                p2X = Math.max(Math.max(points.get(0),points.get(2)), points.get(4)) + trishape.getStrokeWidth()/2;
+                p2Y = Math.max(Math.max(points.get(1),points.get(3)), points.get(5)) + trishape.getStrokeWidth()/2;
+
+            }else{
                 System.out.println("no shapes drew");
             }
 
-            if (shape == "rect" | shape == "line"){
+            if (shape == "rect" | shape == "line" | shape == "tri"){
                 if ((selectviewer.contains(p1X, p1Y) & selectviewer.contains(p2X, p2Y))){
                     ShapeViewer();
                     options.setLayoutX(p2X + 15);
@@ -812,27 +848,30 @@ public class MainSceneController {
             selectrectangle.getStrokeDashArray().addAll(20d, 40d);
             selectrectangle.setVisible(true);                 
             
-        }else{
+        }else if (shape == "tri"){
+            selecttriangle.getPoints().removeAll(selecttriangle.getPoints());
+            ObservableList<Double> points = triobject.getPoints();
+            w = trishape.getStrokeWidth();
+            if (Senscorrectetriangle == true){
+                selecttriangle.getPoints().addAll(new Double[]{ points.get(0) - w,points.get(1) + w,
+                                                                points.get(2) + w, points.get(3) + w,
+                                                                points.get(4), points.get(5) - w});
+            }else{
+                selecttriangle.getPoints().addAll(new Double[]{ points.get(0) - w,points.get(1) + w,
+                    points.get(2) + w, points.get(3) + w,
+                    points.get(4), points.get(5) + w});
+            }
+           selecttriangle.getStrokeDashArray().addAll(5d, 40d);
+            selecttriangle.setVisible(true);
 
         }
 
     }
 
-    Double[] CorrectLineViewer(){
-        Double[] points;
-        Double width = lineshape.getStrokeWidth();
-        //if (p1X < p2X){
-            points = new Double[]{p1X - width, p1Y + width,
-                p2X + width, p2Y + width,
-                 
-                p2X + width, p2Y - width,
-                p1X - width, p1Y - width};
-            
-        //}else if{
-
-        //}
-        return points;
+    void CorrectLineViewer(){
+        
     }
+	
 
     @FXML
     void SelectOptions(ActionEvent e){
@@ -847,7 +886,10 @@ public class MainSceneController {
             }else if (shape == "circle"){
                 dessins.remove(circleshape);
                 selectcircle.setVisible(false);
-            }
+            }else if (shape == "tri"){
+                dessins.remove(trishape);
+                selecttriangle.setVisible(false);
+	    }
             redraw();
 
             eraseselected.setSelected(false);
@@ -879,9 +921,14 @@ public class MainSceneController {
                 p3.setVisible(true);
                 p4.setVisible(true);
 
-            }
+            }else if (shape == "tri"){
+                selecttriangle.setVisible(false);
+
+                p1.setVisible(true);
+                p2.setVisible(true);
+                p3.setVisible(true);
             relocatedPoints();
-            
+	    }
             
         
         }
@@ -897,8 +944,11 @@ public class MainSceneController {
             }else if (shape == "circle"){
                 colorselector.setLayoutX(circleshape.getCenterX() + circleshape.getRadiusX() + 15);
                 colorselector.setLayoutY(circleshape.getCenterY() + circleshape.getRadiusY() - 15);
-            }
+            }else if (shape == "tri"){
+                colorselector.setLayoutX(p2X + 15); // peut etre changer p2X et p2Y
+                colorselector.setLayoutY(p2Y- 15);
             colorselector.show();
+	    }
         }
 
         if (moveselected.isSelected()){
@@ -955,7 +1005,27 @@ public class MainSceneController {
             //gauche
             p4.setCenterX(circleshape.getCenterX() - circleshape.getRadiusX() - circleshape.getStrokeWidth()/2);
             p4.setCenterY(circleshape.getCenterY());
-        }
+        }else if (shape == "tri"){
+
+            ObservableList<Double> points = trishape.getPoints();
+            
+
+            //point le plus a gauche
+            p1.setCenterX(points.get(0) - w);
+            p1.setCenterY(points.get(1) + w);
+
+            //point le plus à droite
+            p2.setCenterX(points.get(2) + w);
+            p2.setCenterY(points.get(3) + w);
+
+            //point milieu
+            p3.setCenterX(points.get(4));
+            if (Senscorrectetriangle == true){
+                p3.setCenterY(points.get(5) + w);
+            }else{
+                p3.setCenterY(points.get(5) - w);
+            }
+	}
     }
 
     
@@ -992,6 +1062,20 @@ public class MainSceneController {
 
             }
         }
+	    if (objet instanceof Polygon) {
+                triobject = (Polygon) objet;
+                gc.setLineWidth(triobject.getStrokeWidth());
+                gc.setStroke(triobject.getStroke());
+                gc.setFill(triobject.getFill());
+
+                ObservableList<Double> points = triobject.getPoints();
+                double[] Xs = new double[]{points.get(0), points.get(2), points.get(4)};
+                double[] Ys = new double[]{points.get(1), points.get(3), points.get(5)};
+               
+                gc.strokePolygon(Xs, Ys, 3);
+                gc.fillPolygon(Xs, Ys, 3);
+            }
+         }
         drawings = board.snapshot(null, null);
 
     }
@@ -1042,7 +1126,12 @@ public class MainSceneController {
                 circleY = p.getCenterY();
 
                 resizecircle(p, e);
-            }
+            }else if (shape =="tri"){
+                triangleX = 0;
+                triangleY = 0;
+
+                //resizetri(p, e);
+	    }
 
             gc.setFill(Color.WHITESMOKE);
             gc.fillRect(0, 0, board.getWidth(), board.getHeight());
@@ -1075,7 +1164,14 @@ public class MainSceneController {
                 gc.strokeOval(circleshape.getCenterX() - circleobject.getRadiusX(), circleshape.getCenterY() - circleobject.getRadiusY(), circleshape.getRadiusX()*2, circleshape.getRadiusY()*2);
                 gc.fillOval(circleshape.getCenterX() - circleobject.getRadiusX(), circleshape.getCenterY() - circleobject.getRadiusY(), circleshape.getRadiusX()*2, circleshape.getRadiusY()*2);
     
-            }
+            }else if (shape == "tri"){
+                gc.setFill(trishape.getFill());
+                gc.setStroke(trishape.getStroke());
+                gc.setLineWidth(trishape.getStrokeWidth());
+
+                gc.strokePolygon(null, null, 0);
+                gc.fillPolygon(null, null, 0);
+	    }
 
         }
     }
@@ -1174,6 +1270,8 @@ public class MainSceneController {
         
     }
 
+ void resizetri(){}
+
     @FXML
     void BeginResize(){
         System.out.println("begin");
@@ -1258,7 +1356,10 @@ public class MainSceneController {
             }else if(shape == "circle"){
                 circleshape.setStroke(colorselector.getValue());
                 selectcircle.setVisible(false);
-            }
+            }else if (shape == "tri"){
+                trishape.setStroke(colorselector.getValue());
+                selecttriangle.setVisible(false);
+	    }
 
             colorselected.setSelected(false);
             redraw();
@@ -1274,7 +1375,9 @@ public class MainSceneController {
             }else if (shape == "circle"){
                 circleshape.setFill(colorselector.getValue());
                 selectcircle.setVisible(false);
-            }
+            }else if (shape == "tri"){
+                trishape.setFill(colorselector.getValue());
+                selecttriangle.setVisible(false);
         
             fillselected.setSelected(false);
             redraw();
