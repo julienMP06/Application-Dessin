@@ -1304,15 +1304,12 @@ public class MainSceneController {
     @FXML
     void MoveSelector(MouseEvent e){
         if (moveselected.isSelected()){
-            if (shape == "rect" | shape == "line"){  
+            if (shape == "rect" || shape == "line"){  
                 Rectangle r = (Rectangle) e.getSource();
                 double offsetX = e.getX() - startX;
                 double offsetY = e.getY() - startY;
                 r.setX(r.getX() + offsetX);
                 r.setY(r.getY() + offsetY);
-
-        
-                
                 
                 gc.setFill(Color.WHITESMOKE);
                 gc.fillRect(0, 0, board.getWidth(), board.getHeight());
@@ -1329,27 +1326,42 @@ public class MainSceneController {
                 }else if (shape == "line"){
                     gc.setLineWidth(lineshape.getStrokeWidth());
                     gc.setStroke(lineshape.getStroke());
-                    
                     gc.strokeLine(r.getX(), r.getY(), r.getX()+r.getWidth(), r.getY()+r.getHeight());
                 }
-
+    
                 startX = e.getX();
                 startY = e.getY();
-
+    
             }else if (shape == "circle"){
-                
-
+                Ellipse c = (Ellipse) e.getSource();
+                double offsetX = e.getX() - startX;
+                double offsetY = e.getY() - startY;
+                c.setCenterX(c.getCenterX() + offsetX);
+                c.setCenterY(c.getCenterY() + offsetY);
+    
+                gc.setFill(Color.WHITESMOKE);
+                gc.fillRect(0, 0, board.getWidth(), board.getHeight());
+                gc.drawImage(drawings, 0, 0);
+    
+                gc.setLineWidth(circleshape.getStrokeWidth());
+                gc.setStroke(circleshape.getStroke());
+                gc.setFill(circleshape.getFill());
+                gc.fillOval(c.getCenterX()-c.getRadiusX()+circleshape.getStrokeWidth()/2,
+                        c.getCenterY()-c.getRadiusY()+circleshape.getStrokeWidth()/2, 
+                        c.getRadiusX()*2-circleshape.getStrokeWidth(), c.getRadiusY()*2-circleshape.getStrokeWidth());
+                gc.strokeOval(c.getCenterX()-c.getRadiusX(), c.getCenterY()-c.getRadiusY(),
+                        c.getRadiusX()*2, c.getRadiusY()*2);
+    
                 startX = e.getX();
                 startY = e.getY();
             }
         }
     }
     
-
     @FXML
     void EndMoveSelector(MouseEvent e){
         selectrectangle.setVisible(false);
-        
+    
         if (shape == "rect"){
             Rectangle rectmoved = new Rectangle(selectrectangle.getX(), selectrectangle.getY(), rectshape.getWidth(), rectshape.getHeight());
             rectmoved.setStrokeWidth(rectshape.getStrokeWidth());
@@ -1363,15 +1375,18 @@ public class MainSceneController {
             linemoved.setStroke(lineshape.getStroke());
             dessins.add(linemoved);
         }else if (shape == "circle"){
-
+            Ellipse ellipsemoved = new Ellipse(circleshape.getCenterX(), circleshape.getCenterY(), circleshape.getRadiusX(), circleshape.getRadiusY());
+            ellipsemoved.setStrokeWidth(circleshape.getStrokeWidth());
+            ellipsemoved.setStroke(circleshape.getStroke());
+            ellipsemoved.setFill(circleshape.getFill());
+            dessins.add(ellipsemoved);
         }
-
-
-
+    
         redraw();
-
+    
         moveselected.setSelected(false);
     }
+    
 
     @FXML
     private void updateZoomValueLabel() {
