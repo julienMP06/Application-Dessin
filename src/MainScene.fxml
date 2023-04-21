@@ -24,10 +24,10 @@
 <AnchorPane fx:id="window" maxHeight="-1.0" maxWidth="-1.0" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="MainSceneController">
    <children>
       <Canvas fx:id="board" height="660.0" layoutY="60.0" onMouseClicked="#CancelSelectOption" onMouseDragged="#Draw" onMouseMoved="#Toolview" onMousePressed="#StartDraw" onMouseReleased="#endDrawRec" width="1280.0" />
-      <Circle id="p1" fx:id="p1" fill="WHITE" onMouseDragged="#SizeSelector" onMouseEntered="#PointSelectorEnter" onMouseExited="#PointSelectorExit" onMousePressed="#BeginResize" onMouseReleased="#SizeSelected" radius="7.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" visible="false" />
-      <Circle fx:id="p2" fill="WHITE" onMouseDragged="#SizeSelector" onMouseEntered="#PointSelectorEnter" onMouseExited="#PointSelectorExit" onMousePressed="#BeginResize" onMouseReleased="#SizeSelected" radius="7.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" visible="false" />
-      <Circle fx:id="p3" fill="WHITE" onMouseDragged="#SizeSelector" onMouseEntered="#PointSelectorEnter" onMouseExited="#PointSelectorExit" onMousePressed="#BeginResize" onMouseReleased="#SizeSelected" radius="7.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" visible="false" />
-      <Circle fx:id="p4" fill="WHITE" onMouseDragged="#SizeSelector" onMouseEntered="#PointSelectorEnter" onMouseExited="#PointSelectorExit" onMousePressed="#BeginResize" onMouseReleased="#SizeSelected" radius="7.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" visible="false" />
+      <Circle id="p1" fx:id="p1" fill="WHITE" layoutY="60.0" onMouseDragged="#SizeSelector" onMouseEntered="#PointSelectorEnter" onMouseExited="#PointSelectorExit" onMousePressed="#BeginResize" onMouseReleased="#SizeSelected" radius="7.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" visible="false" />
+      <Circle fx:id="p2" fill="WHITE" layoutY="60.0" onMouseDragged="#SizeSelector" onMouseEntered="#PointSelectorEnter" onMouseExited="#PointSelectorExit" onMousePressed="#BeginResize" onMouseReleased="#SizeSelected" radius="7.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" visible="false" />
+      <Circle fx:id="p3" fill="WHITE" layoutY="60.0" onMouseDragged="#SizeSelector" onMouseEntered="#PointSelectorEnter" onMouseExited="#PointSelectorExit" onMousePressed="#BeginResize" onMouseReleased="#SizeSelected" radius="7.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" visible="false" />
+      <Circle fx:id="p4" fill="WHITE" layoutY="60.0" onMouseDragged="#SizeSelector" onMouseEntered="#PointSelectorEnter" onMouseExited="#PointSelectorExit" onMousePressed="#BeginResize" onMouseReleased="#SizeSelected" radius="7.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" visible="false" />
       <HBox fx:id="MenusTools" prefHeight="60.0" prefWidth="1280.0" style="-fx-background-color: #C0C0C0;">
          <children>
             <HBox alignment="CENTER_LEFT" prefHeight="47.0" prefWidth="327.0">
@@ -222,12 +222,12 @@
                </graphic></Button>
          </children>
       </HBox>
-      <Rectangle fx:id="selectrectangle" arcHeight="5.0" arcWidth="5.0" fill="#0f83ea00" height="36.0" onMouseDragged="#MoveSelector" onMousePressed="#StartMoveSelector" onMouseReleased="#EndMoveSelector" stroke="WHITE" strokeWidth="5.0" visible="false" width="42.0">
+      <Rectangle fx:id="selectrectangle" arcHeight="5.0" arcWidth="5.0" fill="#0f83ea00" height="36.0" layoutY="60.0" onMouseDragged="#MoveSelector" onMousePressed="#StartMoveSelector" onMouseReleased="#EndMoveSelector" stroke="WHITE" strokeWidth="5.0" visible="false" width="42.0">
          <cursor>
             <Cursor fx:constant="DEFAULT" />
          </cursor>
       </Rectangle>
-      <Ellipse fx:id="selectcircle" fill="#1f93ff00" radiusX="100.0" radiusY="80.0" stroke="WHITE" strokeWidth="5.0" visible="false" />
+      <Ellipse fx:id="selectcircle" fill="#1f93ff00" layoutY="60.0" radiusX="100.0" radiusY="80.0" stroke="WHITE" strokeWidth="5.0" visible="false" />
       <MenuButton fx:id="options" layoutY="60.0" mnemonicParsing="false" text="MenuOptions" visible="false">
         <items>
             <CheckMenuItem fx:id="sizeselected" mnemonicParsing="false" onAction="#SelectOptions" text="Redimensionner" />
@@ -238,12 +238,12 @@
         </items>
       </MenuButton>
       <ColorPicker fx:id="colorselector" layoutY="60.0" onAction="#ColorSelector" prefHeight="26.0" prefWidth="42.0" visible="false" />
-      <Rectangle fx:id="selectviewer" arcHeight="5.0" arcWidth="5.0" fill="#0f83ea00" height="50.0" onMouseMoved="#Toolview" stroke="WHITE" strokeType="OUTSIDE" strokeWidth="5.0" visible="false" width="50.0">
+      <Rectangle fx:id="selectviewer" arcHeight="5.0" arcWidth="5.0" fill="#0f83ea00" height="50.0" layoutY="60.0" onMouseMoved="#Toolview" stroke="WHITE" strokeType="OUTSIDE" strokeWidth="5.0" visible="false" width="50.0">
          <cursor>
             <Cursor fx:constant="DEFAULT" />
          </cursor>
       </Rectangle>
-      <Circle fx:id="eraserviewer" fill="#ffffff00" layoutX="0" onMouseClicked="#Draw" onMouseDragged="#Draw" onMouseMoved="#Toolview" radius="30.0" stroke="WHITE" strokeType="INSIDE" strokeWidth="5.0" visible="false">
+      <Circle fx:id="eraserviewer" fill="#ffffff00" layoutX="0" layoutY="60.0" onMouseClicked="#Draw" onMouseDragged="#Draw" onMouseMoved="#Toolview" radius="30.0" stroke="WHITE" strokeType="INSIDE" strokeWidth="5.0" visible="false">
          <cursor>
             <Cursor fx:constant="NONE" />
          </cursor></Circle>
