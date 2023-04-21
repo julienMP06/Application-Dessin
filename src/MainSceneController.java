@@ -989,8 +989,9 @@ public class MainSceneController {
             }else if (shape == "tri"){
                 colorselector.setLayoutX(p2X + 15); // peut etre changer p2X et p2Y
                 colorselector.setLayoutY(p2Y- 15);
+            }
             colorselector.show();
-	    }
+	    
         }
 
         if (moveselected.isSelected()){
@@ -1171,7 +1172,7 @@ public class MainSceneController {
                 triangleX = 0;
                 triangleY = 0;
 
-                //resizetri(p, e);
+                resizetri(p, e);
 	    }
 
             gc.setFill(Color.WHITESMOKE);
@@ -1210,8 +1211,22 @@ public class MainSceneController {
                 gc.setStroke(trishape.getStroke());
                 gc.setLineWidth(trishape.getStrokeWidth());
 
-                gc.strokePolygon(null, null, 0);
-                gc.fillPolygon(null, null, 0);
+                ObservableList<Double> points = triobject.getPoints();
+                if (p == p1){
+                    points.set(0, X);
+                    points.set(1, Y);
+                }else if (p == p2){
+                    points.set(2, X);
+                    points.set(3, Y);
+                }else if (p == p3){
+                    points.set(4, X);
+                    points.set(5, Y);
+                }
+                double[] Xs = new double[]{points.get(0), points.get(2), points.get(4)};
+                double[] Ys = new double[]{points.get(1), points.get(3), points.get(5)};
+               
+                gc.strokePolygon(Xs, Ys, 3);
+                gc.fillPolygon(Xs, Ys, 3);
 	    }
 
         }
@@ -1311,7 +1326,15 @@ public class MainSceneController {
         
     }
 
- void resizetri(){}
+ void resizetri(Circle p, MouseEvent e){
+    p.setCenterX(e.getX());
+    p.setCenterY(e.getY());
+    
+    X = e.getX();
+    Y = e.getY();
+        
+    
+ }
 
     @FXML
     void BeginResize(){
@@ -1322,6 +1345,8 @@ public class MainSceneController {
             dessins.remove(lineshape);
         }else if (shape == "circle"){
             dessins.remove(circleshape);
+        }else if (shape == "tri"){
+            dessins.remove(trishape);
         }
         redraw();
     }
@@ -1355,8 +1380,8 @@ public class MainSceneController {
             }else if(shape == "circle"){
 
                 dessins.add(circleshape);
-            }else if(shape == ""){
-                
+            }else if(shape == "tri"){
+                dessins.add(trishape);
             }
 
 
@@ -1420,10 +1445,10 @@ public class MainSceneController {
                 trishape.setFill(colorselector.getValue());
                 selecttriangle.setVisible(false);
         
-            fillselected.setSelected(false);
-            redraw();
-
-        }
+            
+            }
+        fillselected.setSelected(false);
+        redraw();
     }
         drawings = board.snapshot(null, null);
         
