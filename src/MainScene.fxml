@@ -23,7 +23,7 @@
 
 <AnchorPane fx:id="window" maxHeight="-1.0" maxWidth="-1.0" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="MainSceneController">
    <children>
-      <Canvas fx:id="board" height="660.0" onMouseClicked="#CancelSelectOption" onMouseDragged="#Draw" onMouseMoved="#Toolview" onMousePressed="#StartDraw" onMouseReleased="#endDrawRec" width="1280.0" />
+      <Canvas fx:id="board" height="660.0" layoutY="60.0" onMouseClicked="#CancelSelectOption" onMouseDragged="#Draw" onMouseMoved="#Toolview" onMousePressed="#StartDraw" onMouseReleased="#endDrawRec" width="1280.0" />
       <Circle id="p1" fx:id="p1" fill="WHITE" onMouseDragged="#SizeSelector" onMouseEntered="#PointSelectorEnter" onMouseExited="#PointSelectorExit" onMousePressed="#BeginResize" onMouseReleased="#SizeSelected" radius="7.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" visible="false" />
       <Circle fx:id="p2" fill="WHITE" onMouseDragged="#SizeSelector" onMouseEntered="#PointSelectorEnter" onMouseExited="#PointSelectorExit" onMousePressed="#BeginResize" onMouseReleased="#SizeSelected" radius="7.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" visible="false" />
       <Circle fx:id="p3" fill="WHITE" onMouseDragged="#SizeSelector" onMouseEntered="#PointSelectorEnter" onMouseExited="#PointSelectorExit" onMousePressed="#BeginResize" onMouseReleased="#SizeSelected" radius="7.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" visible="false" />
